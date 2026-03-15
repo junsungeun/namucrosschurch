@@ -68,7 +68,7 @@ export default function EditorPage() {
           {card.type === "cover" ? (
             <CoverFields card={card} update={(d) => updateCard(card.id, d)} />
           ) : (
-            <BodyFields card={card} update={(d) => updateCard(card.id, d)} />
+            <BodyFields card={card} format={format} update={(d) => updateCard(card.id, d)} />
           )}
 
           {/* 유튜브 링크 */}
@@ -112,17 +112,25 @@ export default function EditorPage() {
             ))}
           </div>
 
-          {/* 실시간 카드 렌더 */}
-          <div style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.12)" }}>
-            <CardPreview
-              card={card}
-              templateColor={templateColor}
-              templateIsLight={templateIsLight}
-              format={format}
-              cardIndex={currentCard}
-              totalCards={cards.length}
-              seriesName={coverCard.series}
-            />
+          {/* 실시간 카드 렌더 — 1080px을 0.5 scale로 540px에 표시 */}
+          <div style={{
+            width: 540,
+            height: format === "story" ? 960 : 540,
+            overflow: "hidden",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.12)",
+            flexShrink: 0,
+          }}>
+            <div style={{ transform: "scale(0.5)", transformOrigin: "top left", width: 1080, height: format === "story" ? 1920 : 1080 }}>
+              <CardPreview
+                card={card}
+                templateColor={templateColor}
+                templateIsLight={templateIsLight}
+                format={format}
+                cardIndex={currentCard}
+                totalCards={cards.length}
+                seriesName={coverCard.series}
+              />
+            </div>
           </div>
 
           {/* 인스타 목업 */}
@@ -155,11 +163,18 @@ function CoverFields({ card, update }: { card: CardData; update: (d: Partial<Car
   );
 }
 
-function BodyFields({ card, update }: { card: CardData; update: (d: Partial<CardData>) => void }) {
+function BodyFields({ card, format, update }: { card: CardData; format: "feed" | "story"; update: (d: Partial<CardData>) => void }) {
+  const maxChars = format === "story" ? 600 : 280;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <Field label="소제목" placeholder="이 카드의 핵심 포인트" value={card.subtitle ?? ""} onChange={(v) => update({ subtitle: v })} />
-      <TextareaField label="본문 내용 *" placeholder="말씀 요약 또는 핵심 내용을 입력하세요" value={card.content ?? ""} onChange={(v) => update({ content: v })} />
+      <TextareaField
+        label="본문 내용 *"
+        placeholder="말씀 요약 또는 핵심 내용을 입력하세요"
+        value={card.content ?? ""}
+        onChange={(v) => update({ content: v })}
+        maxChars={maxChars}
+      />
     </div>
   );
 }
@@ -173,11 +188,34 @@ function Field({ label, placeholder, value, onChange }: { label: string; placeho
   );
 }
 
-function TextareaField({ label, placeholder, value, onChange }: { label: string; placeholder: string; value: string; onChange: (v: string) => void }) {
+function TextareaField({ label, placeholder, value, onChange, maxChars }: { label: string; placeholder: string; value: string; onChange: (v: string) => void; maxChars?: number }) {
+  const len = value.length;
+  const remaining = maxChars ? maxChars - len : null;
+  const isWarn = remaining !== null && remaining <= 30;
+  const isOver = remaining !== null && remaining < 0;
   return (
     <div>
-      <label style={{ display: "block", fontSize: 12, color: "#7A7A72", marginBottom: 6, fontWeight: 500 }}>{label}</label>
-      <textarea className="input" placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} rows={6} />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+        <label style={{ fontSize: 12, color: "#7A7A72", fontWeight: 500 }}>{label}</label>
+        {maxChars && (
+          <span style={{ fontSize: 11, color: isOver ? "#e05252" : isWarn ? "#C4873A" : "#BBBBBB", fontFamily: '"Suit", sans-serif' }}>
+            {len} / {maxChars}
+          </span>
+        )}
+      </div>
+      <textarea
+        className="input"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={7}
+        style={{ resize: "vertical", borderColor: isOver ? "#e05252" : undefined }}
+      />
+      {isOver && (
+        <p style={{ fontSize: 11, color: "#e05252", marginTop: 4, fontFamily: '"Suit", sans-serif' }}>
+          카드에서 내용이 잘릴 수 있습니다 ({Math.abs(remaining!)}자 초과)
+        </p>
+      )}
     </div>
   );
 }

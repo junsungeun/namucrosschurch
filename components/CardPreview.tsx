@@ -139,6 +139,7 @@ function BodyCard({ card, cardIndex, totalCards, series }: {
           lineHeight: 1.9,
           wordBreak: "keep-all",
           overflow: "hidden",
+          whiteSpace: "pre-wrap",
         }}>
           {card.content || "본문 내용을 입력하세요"}
         </div>
