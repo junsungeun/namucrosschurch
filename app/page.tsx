@@ -14,7 +14,7 @@ export default function HomePage() {
   const selected = TEMPLATES.find((t) => t.id === templateId) ?? TEMPLATES[0];
 
   function handleSelectTemplate(t: (typeof TEMPLATES)[0]) {
-    setTemplate(t.id, t.bgColor);
+    setTemplate(t.id, t.bgColor, t.isLight);
   }
 
   return (
@@ -39,7 +39,7 @@ export default function HomePage() {
               onClick={() => {
                 setFormat(f);
                 const first = TEMPLATES.find((t) => t.format === f);
-                if (first) setTemplate(first.id, first.bgColor);
+                if (first) setTemplate(first.id, first.bgColor, first.isLight);
               }}
               className="btn"
               style={{

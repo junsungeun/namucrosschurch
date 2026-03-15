@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 export default function EditorPage() {
   const {
-    format, cards, currentCard, youtubeUrl, templateColor,
+    format, cards, currentCard, youtubeUrl, templateColor, templateIsLight,
     updateCard, addCard, removeCard, setCurrentCard, setYoutubeUrl,
   } = useEditorStore();
 
@@ -117,6 +117,7 @@ export default function EditorPage() {
             <CardPreview
               card={card}
               templateColor={templateColor}
+              templateIsLight={templateIsLight}
               format={format}
               cardIndex={currentCard}
               totalCards={cards.length}
@@ -130,6 +131,7 @@ export default function EditorPage() {
             <InstaMockup
               card={card}
               templateColor={templateColor}
+              templateIsLight={templateIsLight}
               format={format}
               cardIndex={currentCard}
               totalCards={cards.length}

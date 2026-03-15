@@ -16,12 +16,13 @@ export type EditorState = {
   format: "feed" | "story";
   templateId: string;
   templateColor: string;
+  templateIsLight: boolean;
   cards: CardData[];
   youtubeUrl: string;
   currentCard: number;
 
   setFormat: (f: "feed" | "story") => void;
-  setTemplate: (id: string, color: string) => void;
+  setTemplate: (id: string, color: string, isLight: boolean) => void;
   setCards: (cards: CardData[]) => void;
   updateCard: (id: string, data: Partial<CardData>) => void;
   addCard: () => void;
@@ -52,14 +53,15 @@ export const useEditorStore = create<EditorState>()(
   persist(
     (set) => ({
       format: "feed",
-      templateId: "template-a",
-      templateColor: "#2D5A3D",
+      templateId: "tpl-green",
+      templateColor: "#3D6B4F",
+      templateIsLight: false,
       cards: defaultCards,
       youtubeUrl: "",
       currentCard: 0,
 
       setFormat: (f) => set({ format: f }),
-      setTemplate: (id, color) => set({ templateId: id, templateColor: color }),
+      setTemplate: (id, color, isLight) => set({ templateId: id, templateColor: color, templateIsLight: isLight }),
       setCards: (cards) => set({ cards }),
       updateCard: (id, data) =>
         set((s) => ({

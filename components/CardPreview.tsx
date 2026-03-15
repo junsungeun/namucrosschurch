@@ -2,21 +2,21 @@
 
 import { CardData } from "@/lib/store";
 
-// 템플릿 컬러 정의
 export const TEMPLATES = [
-  { id: "template-a", name: "Green", format: "feed",  bgColor: "#2D5A3D", textColor: "#FFFFFF" },
-  { id: "template-b", name: "Dark",  format: "feed",  bgColor: "#1E1E1C", textColor: "#FFFFFF" },
-  { id: "template-c", name: "Cream", format: "feed",  bgColor: "#C4873A", textColor: "#FFFFFF" },
-  { id: "template-d", name: "Sage",  format: "feed",  bgColor: "#4A6741", textColor: "#FFFFFF" },
-  { id: "template-a-s", name: "Green", format: "story", bgColor: "#2D5A3D", textColor: "#FFFFFF" },
-  { id: "template-b-s", name: "Dark",  format: "story", bgColor: "#1E1E1C", textColor: "#FFFFFF" },
-  { id: "template-c-s", name: "Cream", format: "story", bgColor: "#C4873A", textColor: "#FFFFFF" },
-  { id: "template-d-s", name: "Sage",  format: "story", bgColor: "#4A6741", textColor: "#FFFFFF" },
+  { id: "tpl-green",  name: "A · Green",  format: "feed",  bgColor: "#3D6B4F", textColor: "#FFFFFF", isLight: false },
+  { id: "tpl-lime",   name: "B · Lime",   format: "feed",  bgColor: "#E8F2EB", textColor: "#1E1E1C", isLight: true  },
+  { id: "tpl-dark",   name: "C · Dark",   format: "feed",  bgColor: "#1E2E24", textColor: "#FFFFFF", isLight: false },
+  { id: "tpl-accent", name: "D · Accent", format: "feed",  bgColor: "#C4873A", textColor: "#FFFFFF", isLight: false },
+  { id: "tpl-green-s",  name: "A · Green",  format: "story", bgColor: "#3D6B4F", textColor: "#FFFFFF", isLight: false },
+  { id: "tpl-lime-s",   name: "B · Lime",   format: "story", bgColor: "#E8F2EB", textColor: "#1E1E1C", isLight: true  },
+  { id: "tpl-dark-s",   name: "C · Dark",   format: "story", bgColor: "#1E2E24", textColor: "#FFFFFF", isLight: false },
+  { id: "tpl-accent-s", name: "D · Accent", format: "story", bgColor: "#C4873A", textColor: "#FFFFFF", isLight: false },
 ];
 
 type Props = {
   card: CardData;
   templateColor: string;
+  templateIsLight?: boolean;
   format: "feed" | "story";
   cardIndex: number;
   totalCards: number;
@@ -24,119 +24,153 @@ type Props = {
 };
 
 export default function CardPreview({
-  card,
-  templateColor,
-  format,
-  cardIndex,
-  totalCards,
-  seriesName,
+  card, templateColor, templateIsLight = false,
+  format, cardIndex, totalCards, seriesName,
 }: Props) {
-  const isFeed = format === "feed";
-  const w = isFeed ? 540 : 304;
-  const h = isFeed ? 540 : 540;
-
-  const containerStyle: React.CSSProperties = {
-    width: w,
-    height: h,
-    background: card.type === "cover" ? templateColor : "#FFFFFF",
-    position: "relative",
-    overflow: "hidden",
-    flexShrink: 0,
-    border: card.type === "body" ? "0.5px solid rgba(0,0,0,0.1)" : "none",
-    fontFamily: '"GMarketSans", sans-serif',
-  };
+  const size = format === "feed" ? 540 : 405; // feed 1:1, story 3:4 비율
 
   return (
-    <div style={containerStyle} id={`card-render-${cardIndex}`}>
-      {card.type === "cover" ? (
-        <CoverCard card={card} color={templateColor} />
-      ) : (
-        <BodyCard card={card} cardIndex={cardIndex} totalCards={totalCards} series={seriesName} />
-      )}
+    <div
+      id={`card-render-${cardIndex}`}
+      style={{
+        width: size,
+        height: size,
+        background: card.type === "cover" ? templateColor : "#FFFFFF",
+        border: card.type === "body" ? "0.5px solid rgba(0,0,0,0.1)" : "none",
+        flexShrink: 0,
+        overflow: "hidden",
+      }}
+    >
+      {card.type === "cover"
+        ? <CoverCard card={card} isLight={templateIsLight} cardIndex={cardIndex} totalCards={totalCards} />
+        : <BodyCard card={card} cardIndex={cardIndex} totalCards={totalCards} series={seriesName} />
+      }
     </div>
   );
 }
 
-function CoverCard({ card }: { card: CardData; color?: string }) {
+/* ── 표지 카드 ── */
+function CoverCard({ card, isLight, cardIndex, totalCards }: {
+  card: CardData; isLight: boolean; cardIndex: number; totalCards: number;
+}) {
+  const fg = isLight ? "#1E1E1C" : "#FFFFFF";
+  const fgSub = isLight ? "rgba(0,0,0,0.45)" : "rgba(255,255,255,0.45)";
+  const divider = isLight ? "rgba(0,0,0,0.12)" : "rgba(255,255,255,0.2)";
+  const playBorder = isLight ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.4)";
+  const playFill = isLight ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.8)";
+
   return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", padding: "36px 32px" }}>
-      {/* 상단 시리즈 */}
-      <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 11, fontWeight: 500, color: "rgba(255,255,255,0.65)", letterSpacing: "0.15em", textTransform: "uppercase" }}>
-        {card.series || "나무십자가교회"}
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "clamp(24px,5%,48px)" as string }}>
+      {/* 제목 — flex:1로 공간 채움 */}
+      <div style={{
+        flex: 1,
+        fontFamily: '"GMarketSans", sans-serif',
+        fontWeight: 700,
+        fontSize: 42,
+        lineHeight: 1.2,
+        letterSpacing: "-0.02em",
+        wordBreak: "keep-all",
+        color: fg,
+        display: "flex",
+        alignItems: "flex-start",
+        paddingTop: 4,
+      }}>
+        {card.title || "설교 제목"}
       </div>
 
-      {/* 중앙 제목 영역 */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center" }}>
-        <div style={{ fontFamily: '"GMarketSans", sans-serif', fontSize: 28, fontWeight: 700, color: "#FFFFFF", lineHeight: 1.3, marginBottom: 16 }}>
-          {card.title || "설교 제목"}
+      {/* 하단 */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ height: 1, background: divider }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          {/* 좌: 브랜드 */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ fontFamily: '"GMarketSans", sans-serif', fontWeight: 700, fontSize: 14, color: fg, letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: 4 }}>
+              나무카드.
+              <span style={{ fontWeight: 500, opacity: 0.55, fontSize: "0.85em", color: fg }}>주일예배</span>
+            </div>
+            <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 11, color: fgSub, letterSpacing: "0.03em" }}>
+              {[card.scripture, card.date].filter(Boolean).join(" · ")}
+            </div>
+          </div>
+          {/* 우: 번호 + 플레이버튼 */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+            <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 11, color: isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.4)", letterSpacing: "0.06em" }}>
+              {String(cardIndex + 1).padStart(2, "0")} / {String(totalCards).padStart(2, "0")}
+            </div>
+            <PlayBtn border={playBorder} fill={playFill} />
+          </div>
         </div>
-        {card.scripture && (
-          <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>
-            {card.scripture}
+      </div>
+    </div>
+  );
+}
+
+/* ── 본문 카드 ── */
+function BodyCard({ card, cardIndex, totalCards, series }: {
+  card: CardData; cardIndex: number; totalCards: number; series?: string;
+}) {
+  return (
+    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: "clamp(24px,5%,48px)" as string }}>
+      {/* 상단: 소제목 + 본문 */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 12, flex: 1, overflow: "hidden" }}>
+        {card.subtitle && (
+          <div style={{ fontFamily: '"Suit", sans-serif', fontWeight: 700, fontSize: 15, color: "#1E1E1C", lineHeight: 1.5, wordBreak: "keep-all" }}>
+            {card.subtitle}
           </div>
         )}
-      </div>
-
-      {/* 하단 브랜드바 */}
-      <BrandBar date={card.date} cardIndex={0} totalCards={1} dark />
-    </div>
-  );
-}
-
-function BodyCard({ card, cardIndex, totalCards, series }: { card: CardData; cardIndex: number; totalCards: number; series?: string }) {
-  return (
-    <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", padding: "32px 28px" }}>
-      {/* 소제목 */}
-      {card.subtitle && (
-        <div style={{ fontFamily: '"GMarketSans", sans-serif', fontSize: 13, fontWeight: 700, color: "#1E1E1C", marginBottom: 14, letterSpacing: "-0.01em" }}>
-          {card.subtitle}
+        <div style={{ fontFamily: '"Suit", sans-serif', fontWeight: 400, fontSize: 13, color: "#444444", lineHeight: 1.9, wordBreak: "keep-all", overflow: "hidden" }}>
+          {card.content || "본문 내용을 입력하세요"}
         </div>
-      )}
-
-      {/* 구분선 */}
-      <div style={{ width: 24, height: 2, background: "#3D6B4F", marginBottom: 16 }} />
-
-      {/* 본문 */}
-      <div style={{ flex: 1, fontFamily: '"Suit", sans-serif', fontSize: 14, fontWeight: 400, color: "#555555", lineHeight: 1.85, overflow: "hidden" }}>
-        {card.content || "본문 내용"}
       </div>
 
-      {/* 하단 브랜드바 */}
-      <BodyBrandBar cardIndex={cardIndex} totalCards={totalCards} series={series} />
-    </div>
-  );
-}
-
-function BrandBar({ date, cardIndex, totalCards, dark }: { date?: string; cardIndex: number; totalCards: number; dark?: boolean }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <div className="play-circle">
-          <div className="play-triangle" />
-        </div>
-        <span style={{ fontFamily: '"GMarketSans", sans-serif', fontSize: 11, fontWeight: 700, color: dark ? "rgba(255,255,255,0.9)" : "#1E1E1C" }}>
-          나무카드.
-        </span>
-      </div>
-      <div style={{ textAlign: "right" }}>
-        {date && <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 10, color: dark ? "rgba(255,255,255,0.6)" : "#7A7A72" }}>{date}</div>}
-        <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 10, color: dark ? "rgba(255,255,255,0.4)" : "#aaa" }}>
-          {cardIndex + 1} / {totalCards}
+      {/* 하단 */}
+      <div style={{ display: "flex", flexDirection: "column", gap: 14, marginTop: 16 }}>
+        <div style={{ height: 1, background: "rgba(0,0,0,0.1)" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          {/* 좌: 브랜드 */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <div style={{ fontFamily: '"GMarketSans", sans-serif', fontWeight: 700, fontSize: 14, color: "#1E1E1C", letterSpacing: "-0.01em", display: "flex", alignItems: "center", gap: 5 }}>
+              나무카드.
+              {series && (
+                <span style={{ fontWeight: 400, fontFamily: '"Suit", sans-serif', fontSize: "0.8em", color: "#7A7A72", opacity: 0.7 }}>
+                  {series}
+                </span>
+              )}
+            </div>
+            <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 11, color: "#7A7A72", opacity: 0.5, letterSpacing: "0.03em" }}>
+              나무십자가교회
+            </div>
+          </div>
+          {/* 우: 번호 + 플레이버튼 */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6 }}>
+            <div style={{ fontFamily: '"Suit", sans-serif', fontSize: 11, color: "#C0C0C0", letterSpacing: "0.06em" }}>
+              {String(cardIndex + 1).padStart(2, "0")} / {String(totalCards).padStart(2, "0")}
+            </div>
+            <PlayBtn border="#DDDDDD" fill="#999999" />
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function BodyBrandBar({ cardIndex, totalCards, series }: { cardIndex: number; totalCards: number; series?: string }) {
+/* ── 플레이버튼 ── */
+function PlayBtn({ border, fill }: { border: string; fill: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderTop: "0.5px solid rgba(0,0,0,0.08)", paddingTop: 12, marginTop: 12 }}>
-      <span style={{ fontFamily: '"GMarketSans", sans-serif', fontSize: 11, fontWeight: 700, color: "#1E1E1C" }}>
-        나무카드.
-      </span>
-      <span style={{ fontFamily: '"Suit", sans-serif', fontSize: 10, color: "#aaa" }}>
-        {series ? `${series} · ` : ""}{cardIndex + 1} / {totalCards}
-      </span>
+    <div style={{
+      width: 28, height: 28,
+      borderRadius: "50%",
+      border: `1.5px solid ${border}`,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      flexShrink: 0,
+    }}>
+      <div style={{
+        width: 0, height: 0,
+        marginLeft: 2,
+        borderTop: "4px solid transparent",
+        borderBottom: "4px solid transparent",
+        borderLeft: `6.5px solid ${fill}`,
+      }} />
     </div>
   );
 }
