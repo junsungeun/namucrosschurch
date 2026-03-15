@@ -110,9 +110,8 @@ function LikeBar({ card }: { card: CardData }) {
         <span style={{ marginLeft: "auto", fontSize: 22 }}>🔖</span>
       </div>
       <div style={{ fontSize: 12, fontWeight: 600, color: "#000", marginBottom: 4 }}>좋아요 0개</div>
-      <div style={{ fontSize: 12, color: "#000" }}>
-        <span style={{ fontWeight: 600 }}>namucard</span>{" "}
-        <span style={{ color: "#8e8e8e" }}>{card.type === "cover" ? (card.title || "설교 제목") : (card.subtitle || "본문 카드")}</span>
+      <div style={{ fontSize: 12, color: "#8e8e8e" }}>
+        {card.type === "cover" ? (card.title || "설교 제목") : (card.subtitle || "본문 카드")}
       </div>
       <div style={{ fontSize: 11, color: "#8e8e8e", marginTop: 4 }}>방금</div>
     </div>
