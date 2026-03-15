@@ -7,7 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import Link from "next/link";
 
 export default function DonePage() {
-  const { cards, format, templateColor, youtubeUrl } = useEditorStore();
+  const { cards, format, templateColor, templateIsLight, youtubeUrl } = useEditorStore();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -118,19 +118,25 @@ export default function DonePage() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20, marginBottom: 40 }}>
           {cards.map((card, i) => (
             <div key={card.id} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              <div
-                ref={(el) => { cardRefs.current[i] = el; }}
-                style={{ borderRadius: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.1)" }}
-              >
-                <CardPreview
-                  card={card}
-                  templateColor={templateColor}
-                  format={format}
-                  cardIndex={i}
-                  totalCards={cards.length}
-                  seriesName={coverCard.series}
-                />
+              {/* 실제 해상도 렌더 — html2canvas가 이 div를 캡처 */}
+              <div ref={(el) => { cardRefs.current[i] = el; }} style={{ position: "absolute", left: -9999, top: -9999 }}>
+                <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format={format} cardIndex={i} totalCards={cards.length} seriesName={coverCard.series} />
               </div>
+              {/* 썸네일 — scale(0.25) 표시 */}
+              <div style={{ borderRadius: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.1)", width: "100%", aspectRatio: format === "story" ? "9/16" : "1/1" }}>
+                <div style={{ transform: "scale(0.25)", transformOrigin: "top left", width: 1080, height: format === "story" ? 1920 : 1080 }}>
+                  <CardPreview
+                    card={card}
+                    templateColor={templateColor}
+                    templateIsLight={templateIsLight}
+                    format={format}
+                    cardIndex={i}
+                    totalCards={cards.length}
+                    seriesName={coverCard.series}
+                  />
+                </div>
+              </div>
+              {/* 라벨 + 다운로드 버튼 */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontFamily: '"Suit", sans-serif', fontSize: 12, color: "#7A7A72" }}>
                   {i === 0 ? "표지" : `${i}번 카드`}
