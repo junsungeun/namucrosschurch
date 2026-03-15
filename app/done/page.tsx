@@ -53,38 +53,34 @@ export default function DonePage() {
     setSaveError(null);
     try {
       const html2canvas = (await import("html2canvas")).default;
-      const { supabase } = await import("@/lib/supabase");
-
-      const cardUrls: string[] = [];
+      const images: string[] = [];
 
       for (let i = 0; i < cards.length; i++) {
         const el = cardRefs.current[i];
         if (!el) continue;
         const canvas = await html2canvas(el, { useCORS: true, scale: 2 });
-        const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), "image/png"));
-        const arrayBuffer = await blob.arrayBuffer();
-        const filename = `${Date.now()}_card_${i + 1}.png`;
-        const { data, error } = await supabase.storage.from("cards").upload(filename, arrayBuffer, { contentType: "image/png" });
-        if (error) { setSaveError(`스토리지 오류: ${error.message}`); return; }
-        if (data) {
-          const { data: urlData } = supabase.storage.from("cards").getPublicUrl(data.path);
-          cardUrls.push(urlData.publicUrl);
-        }
+        images.push(canvas.toDataURL("image/png"));
       }
 
-      const { error: insertError } = await supabase.from("cardsets").insert({
-        date: coverCard.date ?? "",
-        title: coverCard.title ?? "",
-        series: coverCard.series,
-        scripture: coverCard.scripture,
-        summary: cards.find((c) => c.type === "body")?.content,
-        youtube_url: youtubeUrl || null,
-        template_id: "template-a",
-        format,
-        card_urls: cardUrls,
+      const res = await fetch("/api/save-cardset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          images,
+          meta: {
+            date: coverCard.date ?? "",
+            title: coverCard.title ?? "",
+            series: coverCard.series,
+            scripture: coverCard.scripture,
+            summary: cards.find((c) => c.type === "body")?.content,
+            youtube_url: youtubeUrl || null,
+            format,
+          },
+        }),
       });
 
-      if (insertError) { setSaveError(`DB 오류: ${insertError.message}`); return; }
+      const json = await res.json();
+      if (json.error) { setSaveError(json.error); return; }
       setSaved(true);
     } catch (e) {
       setSaveError(String(e));
