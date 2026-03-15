@@ -95,7 +95,7 @@ export default function HomePage() {
               <div style={{ fontSize: 12, fontWeight: 500, color: "#7A7A72", marginBottom: 14, letterSpacing: "0.05em" }}>미리보기</div>
               <div style={{
                 width: "100%",
-                aspectRatio: "1/1",
+                aspectRatio: format === "story" ? "9/16" : "1/1",
                 borderRadius: 12,
                 background: selected?.bgColor ?? "#2D5A3D",
                 display: "flex",
