@@ -123,8 +123,8 @@ export default function DonePage() {
                 <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format={format} cardIndex={i} totalCards={cards.length} seriesName={coverCard.series} />
               </div>
               {/* 썸네일 — scale(0.25) 표시 */}
-              <div style={{ borderRadius: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.1)", width: "100%", aspectRatio: format === "story" ? "9/16" : "1/1" }}>
-                <div style={{ transform: "scale(0.25)", transformOrigin: "top left", width: 1080, height: format === "story" ? 1920 : 1080 }}>
+              <div style={{ borderRadius: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.1)", width: "100%", aspectRatio: format === "story" ? "9/16" : "1/1", position: "relative" }}>
+                <div style={{ position: "absolute", top: 0, left: 0, transform: "scale(0.25)", transformOrigin: "top left", width: 1080, height: format === "story" ? 1920 : 1080 }}>
                   <CardPreview
                     card={card}
                     templateColor={templateColor}
