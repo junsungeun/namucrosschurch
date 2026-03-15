@@ -62,8 +62,9 @@ export default function DonePage() {
         if (!el) continue;
         const canvas = await html2canvas(el, { useCORS: true, scale: 2 });
         const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), "image/png"));
+        const arrayBuffer = await blob.arrayBuffer();
         const filename = `${Date.now()}_card_${i + 1}.png`;
-        const { data, error } = await supabase.storage.from("cards").upload(filename, blob, { contentType: "image/png" });
+        const { data, error } = await supabase.storage.from("cards").upload(filename, arrayBuffer, { contentType: "image/png" });
         if (error) { setSaveError(`스토리지 오류: ${error.message}`); return; }
         if (data) {
           const { data: urlData } = supabase.storage.from("cards").getPublicUrl(data.path);
