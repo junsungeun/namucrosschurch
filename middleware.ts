@@ -1,20 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED = ["/editor", "/done", "/archive", "/admin"];
+// 로그인 없이 접근 가능한 경로
+const PUBLIC = ["/login", "/article", "/api"];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const isProtected = PROTECTED.some((p) => pathname.startsWith(p));
-  if (!isProtected) return NextResponse.next();
 
+  // 공개 경로는 통과
+  if (PUBLIC.some((p) => pathname.startsWith(p))) {
+    return NextResponse.next();
+  }
+
+  // 인증 쿠키 확인
   const auth = req.cookies.get("namucard_auth");
   if (auth?.value === "ok") return NextResponse.next();
 
+  // 미인증 → 로그인 페이지로
   const loginUrl = new URL("/login", req.url);
   loginUrl.searchParams.set("redirect", pathname);
   return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
-  matcher: ["/editor/:path*", "/done/:path*", "/archive/:path*", "/admin/:path*"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
 };
