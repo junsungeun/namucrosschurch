@@ -90,7 +90,7 @@ export default function EditorPage() {
         </div>
 
         {/* 우: 미리보기 패널 */}
-        <div style={{ overflowY: "auto", background: "#F2EFE8", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 32, padding: 40 }}>
+        <div style={{ overflowY: "auto", overflowX: "auto", background: "#F2EFE8", display: "flex", flexDirection: "column", alignItems: "center", gap: 32, padding: 40 }}>
           {/* 카드 인디케이터 */}
           <div style={{ display: "flex", gap: 6 }}>
             {cards.map((_, i) => (
