@@ -29,15 +29,17 @@ type Props = {
 
 export default function CardPreview({
   card, templateColor, templateIsLight = false,
-  cardIndex, totalCards, seriesName,
+  format, cardIndex, totalCards, seriesName,
 }: Props) {
-  const size = 540;
+  // 피드: 1:1 (540×540), 스토리: 9:16 (540×960)
+  const w = 540;
+  const h = format === "story" ? 960 : 540;
 
   return (
     <div
       id={`card-render-${cardIndex}`}
       style={{
-        width: size, height: size,
+        width: w, height: h,
         background: card.type === "cover" ? templateColor : "#FFFFFF",
         border: card.type === "body" ? "0.5px solid rgba(0,0,0,0.1)" : "none",
         flexShrink: 0, overflow: "hidden",
