@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useEditorStore } from "@/lib/store";
+import { useRef, useState, useEffect } from "react";
+import { useEditorStore, CardData } from "@/lib/store";
 import CardPreview from "@/components/CardPreview";
 import PageHeader from "@/components/PageHeader";
 import Link from "next/link";
@@ -122,20 +122,16 @@ export default function DonePage() {
               <div ref={(el) => { cardRefs.current[i] = el; }} style={{ position: "absolute", left: -9999, top: -9999 }}>
                 <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format={format} cardIndex={i} totalCards={cards.length} seriesName={coverCard.series} />
               </div>
-              {/* 썸네일 — scale(0.25) 표시 */}
-              <div style={{ borderRadius: 8, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.1)", width: "100%", aspectRatio: format === "story" ? "9/16" : "1/1", position: "relative" }}>
-                <div style={{ position: "absolute", top: 0, left: 0, transform: "scale(0.25)", transformOrigin: "top left", width: 1080, height: format === "story" ? 1920 : 1080 }}>
-                  <CardPreview
-                    card={card}
-                    templateColor={templateColor}
-                    templateIsLight={templateIsLight}
-                    format={format}
-                    cardIndex={i}
-                    totalCards={cards.length}
-                    seriesName={coverCard.series}
-                  />
-                </div>
-              </div>
+              {/* 썸네일 — 셀 너비에 맞게 동적 스케일 */}
+              <CardThumbnail
+                card={card}
+                format={format}
+                templateColor={templateColor}
+                templateIsLight={templateIsLight}
+                cardIndex={i}
+                totalCards={cards.length}
+                seriesName={coverCard.series}
+              />
               {/* 라벨 + 다운로드 버튼 */}
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <span style={{ fontFamily: '"Suit", sans-serif', fontSize: 12, color: "#7A7A72" }}>
@@ -167,6 +163,33 @@ export default function DonePage() {
           <Link href="/archive" className="btn btn-primary">보관함 보기 →</Link>
         </div>
       </main>
+    </div>
+  );
+}
+
+function CardThumbnail({ card, format, templateColor, templateIsLight, cardIndex, totalCards, seriesName }: {
+  card: CardData; format: "feed" | "story"; templateColor: string; templateIsLight: boolean;
+  cardIndex: number; totalCards: number; seriesName?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.25);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const obs = new ResizeObserver(([e]) => {
+      setScale(e.contentRect.width / 1080);
+    });
+    obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
+  const cardH = format === "story" ? 1920 : 1080;
+
+  return (
+    <div ref={ref} style={{ width: "100%", aspectRatio: format === "story" ? "9/16" : "1/1", overflow: "hidden", position: "relative", borderRadius: 8, boxShadow: "0 2px 12px rgba(0,0,0,0.1)" }}>
+      <div style={{ position: "absolute", top: 0, left: 0, transform: `scale(${scale})`, transformOrigin: "top left", width: 1080, height: cardH }}>
+        <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format={format} cardIndex={cardIndex} totalCards={totalCards} seriesName={seriesName} />
+      </div>
     </div>
   );
 }
