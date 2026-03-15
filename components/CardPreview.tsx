@@ -118,6 +118,20 @@ function CoverCard({ card, isLight, cardIndex, totalCards }: {
   );
 }
 
+function autoWrap(text: string, maxLen = 22): string {
+  return text.split("\n").map((line) => {
+    if (line.length <= maxLen) return line;
+    const chunks: string[] = [];
+    let rest = line;
+    while (rest.length > maxLen) {
+      chunks.push(rest.slice(0, maxLen));
+      rest = rest.slice(maxLen);
+    }
+    if (rest) chunks.push(rest);
+    return chunks.join("\n");
+  }).join("\n");
+}
+
 /* ── 본문 카드 ── */
 function BodyCard({ card, cardIndex, totalCards, series }: {
   card: CardData; cardIndex: number; totalCards: number; series?: string;
@@ -141,7 +155,7 @@ function BodyCard({ card, cardIndex, totalCards, series }: {
           overflow: "hidden",
           whiteSpace: "pre-wrap",
         }}>
-          {card.content || "본문 내용을 입력하세요"}
+          {autoWrap(card.content || "본문 내용을 입력하세요")}
         </div>
       </div>
 

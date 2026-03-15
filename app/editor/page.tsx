@@ -2,7 +2,6 @@
 
 import { useEditorStore, CardData } from "@/lib/store";
 import CardPreview from "@/components/CardPreview";
-import InstaMockup from "@/components/InstaMockup";
 import PageHeader from "@/components/PageHeader";
 import { useRouter } from "next/navigation";
 
@@ -133,19 +132,6 @@ export default function EditorPage() {
             </div>
           </div>
 
-          {/* 인스타 목업 */}
-          <div>
-            <div style={{ fontSize: 11, color: "#7A7A72", textAlign: "center", marginBottom: 12, letterSpacing: "0.05em" }}>인스타그램 미리보기</div>
-            <InstaMockup
-              card={card}
-              templateColor={templateColor}
-              templateIsLight={templateIsLight}
-              format={format}
-              cardIndex={currentCard}
-              totalCards={cards.length}
-              seriesName={coverCard.series}
-            />
-          </div>
         </div>
       </div>
     </div>
