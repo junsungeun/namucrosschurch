@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceKey) {
+    return NextResponse.json({ error: `환경변수 미설정: URL=${!!supabaseUrl}, KEY=${!!serviceKey}` }, { status: 500 });
+  }
+
   try {
     const { images, meta } = await req.json() as {
       images: string[]; // base64 PNG strings
