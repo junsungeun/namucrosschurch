@@ -10,6 +10,7 @@ export default function DonePage() {
   const { cards, format, templateColor, templateIsLight, youtubeUrl } = useEditorStore();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const coverCard = cards[0];
@@ -49,6 +50,7 @@ export default function DonePage() {
 
   async function saveToSupabase() {
     setSaving(true);
+    setSaveError(null);
     try {
       const html2canvas = (await import("html2canvas")).default;
       const { supabase } = await import("@/lib/supabase");
@@ -62,13 +64,14 @@ export default function DonePage() {
         const blob = await new Promise<Blob>((res) => canvas.toBlob((b) => res(b!), "image/png"));
         const filename = `${Date.now()}_card_${i + 1}.png`;
         const { data, error } = await supabase.storage.from("cards").upload(filename, blob, { contentType: "image/png" });
-        if (!error && data) {
+        if (error) { setSaveError(`스토리지 오류: ${error.message}`); return; }
+        if (data) {
           const { data: urlData } = supabase.storage.from("cards").getPublicUrl(data.path);
           cardUrls.push(urlData.publicUrl);
         }
       }
 
-      await supabase.from("cardsets").insert({
+      const { error: insertError } = await supabase.from("cardsets").insert({
         date: coverCard.date ?? "",
         title: coverCard.title ?? "",
         series: coverCard.series,
@@ -78,11 +81,12 @@ export default function DonePage() {
         template_id: "template-a",
         format,
         card_urls: cardUrls,
-      }).select().single();
+      });
 
+      if (insertError) { setSaveError(`DB 오류: ${insertError.message}`); return; }
       setSaved(true);
     } catch (e) {
-      console.error(e);
+      setSaveError(String(e));
     } finally {
       setSaving(false);
     }
@@ -102,15 +106,20 @@ export default function DonePage() {
               총 {cards.length}장 · {format === "feed" ? "피드 1:1" : "스토리 9:16"}
             </p>
           </div>
-          <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={downloadAll} className="btn btn-secondary">전체 ZIP 다운로드</button>
-            <button
-              onClick={saveToSupabase}
-              className="btn btn-primary"
-              disabled={saving || saved}
-            >
-              {saved ? "✓ 저장 완료" : saving ? "저장 중..." : "보관함에 저장"}
-            </button>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button onClick={downloadAll} className="btn btn-secondary">전체 ZIP 다운로드</button>
+              <button
+                onClick={saveToSupabase}
+                className="btn btn-primary"
+                disabled={saving || saved}
+              >
+                {saved ? "✓ 저장 완료" : saving ? "저장 중..." : "보관함에 저장"}
+              </button>
+            </div>
+            {saveError && (
+              <p style={{ fontSize: 12, color: "#e05252", fontFamily: '"Suit", sans-serif' }}>{saveError}</p>
+            )}
           </div>
         </div>
 
