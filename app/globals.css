@@ -1,0 +1,137 @@
+/* ── GMarketSans ── */
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff") format("woff");
+  font-weight: 700; font-display: swap;
+}
+@font-face {
+  font-family: "GMarketSans";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff") format("woff");
+  font-weight: 500; font-display: swap;
+}
+
+/* ── Suit ── */
+@font-face {
+  font-family: "Suit";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Regular.woff2") format("woff2");
+  font-weight: 400; font-display: swap;
+}
+@font-face {
+  font-family: "Suit";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2") format("woff2");
+  font-weight: 500; font-display: swap;
+}
+@font-face {
+  font-family: "Suit";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2") format("woff2");
+  font-weight: 600; font-display: swap;
+}
+@font-face {
+  font-family: "Suit";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2") format("woff2");
+  font-weight: 700; font-display: swap;
+}
+
+:root {
+  --primary:      #3D6B4F;
+  --primary-lt:   #E8F2EB;
+  --accent:       #C4873A;
+  --accent-lt:    #F5ECD7;
+  --bg:           #FAFAF8;
+  --bg-sub:       #F2EFE8;
+  --bg-dark:      #1E2E24;
+  --text:         #1E1E1C;
+  --text-muted:   #7A7A72;
+  --border:       rgba(0,0,0,0.08);
+  --f-head:       "GMarketSans", sans-serif;
+  --f-body:       "Suit", "Noto Sans KR", sans-serif;
+  --space-1: 8px;  --space-2: 12px; --space-3: 16px;
+  --space-4: 24px; --space-5: 32px; --space-6: 48px; --space-7: 64px;
+  --container:    1200px;
+  --radius-sm:    8px;
+  --radius-md:    12px;
+  --radius-lg:    20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { max-width: 100vw; overflow-x: hidden; }
+
+body {
+  font-family: var(--f-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  border: none;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-secondary { background: transparent; color: var(--text); border: 1px solid rgba(0,0,0,0.15); }
+.btn-accent  { background: var(--accent); color: #fff; }
+.btn-dark    { background: var(--bg-dark); color: #fff; }
+.btn-lg { padding: 14px 28px; font-size: 15px; }
+
+.input {
+  width: 100%;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-family: var(--f-body);
+  font-size: 14px;
+  background: #fff;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input:focus { border-color: var(--primary); }
+textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
+
+.card-box {
+  background: #fff;
+  border: 0.5px solid rgba(0,0,0,0.08);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 100px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.badge-primary { background: var(--primary-lt); color: var(--primary); }
+.badge-accent  { background: var(--accent-lt);  color: var(--accent); }
+
+.play-circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.play-triangle {
+  width: 0; height: 0;
+  border-top: 4.5px solid transparent;
+  border-bottom: 4.5px solid transparent;
+  border-left: 7px solid rgba(255,255,255,0.8);
+  margin-left: 2px;
+}
