@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
@@ -43,6 +44,7 @@ export async function POST(req: NextRequest) {
 
     if (insertError) return NextResponse.json({ error: `DB: ${insertError.message}` }, { status: 500 });
 
+    revalidatePath("/archive");
     return NextResponse.json({ ok: true, cardUrls });
   } catch (e) {
     return NextResponse.json({ error: String(e) }, { status: 500 });
