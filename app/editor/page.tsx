@@ -20,17 +20,17 @@ export default function EditorPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div className="editor-shell">
       <PageHeader title="에디터" />
 
-      <div style={{ flex: 1, display: "grid", gridTemplateColumns: "420px 1fr", height: "calc(100vh - 56px)" }}>
+      <div className="editor-grid">
         {/* 좌: 입력 패널 */}
-        <div style={{ borderRight: "1px solid rgba(0,0,0,0.08)", overflowY: "auto", padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
+        <div className="editor-panel">
 
           {/* 카드 탭 */}
           <div>
-            <div style={{ fontSize: 12, color: "#7A7A72", marginBottom: 10, fontWeight: 500 }}>카드 선택</div>
-            <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            <div className="label-sm" style={{ marginBottom: 10 }}>카드 선택</div>
+            <div className="card-tabs">
               {cards.map((c, i) => (
                 <button
                   key={c.id}
@@ -72,7 +72,7 @@ export default function EditorPage() {
 
           {/* 유튜브 링크 */}
           <div>
-            <label style={{ display: "block", fontSize: 12, color: "#7A7A72", marginBottom: 8, fontWeight: 500 }}>
+            <label className="label-sm" style={{ marginBottom: 8 }}>
               유튜브 링크 (선택 — 설교 영상 연결)
             </label>
             <input
@@ -90,28 +90,23 @@ export default function EditorPage() {
         </div>
 
         {/* 우: 미리보기 패널 */}
-        <div style={{ overflowY: "auto", overflowX: "auto", background: "#F2EFE8", display: "flex", flexDirection: "column", alignItems: "center", gap: 32, padding: 40 }}>
+        <div className="editor-preview">
           {/* 카드 인디케이터 */}
-          <div style={{ display: "flex", gap: 6 }}>
+          <div className="card-indicator">
             {cards.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentCard(i)}
+                className="card-dot"
                 style={{
                   width: currentCard === i ? 20 : 8,
-                  height: 8,
-                  borderRadius: 4,
-                  background: currentCard === i ? "#3D6B4F" : "rgba(0,0,0,0.2)",
-                  border: "none",
-                  cursor: "pointer",
-                  transition: "width 0.2s",
-                  padding: 0,
+                  background: currentCard === i ? "var(--primary)" : "rgba(0,0,0,0.2)",
                 }}
               />
             ))}
           </div>
 
-          {/* 실시간 카드 렌더 — 1080px을 0.5 scale로 540px에 표시 */}
+          {/* 실시간 카드 렌더 */}
           <div style={{
             width: 540,
             height: format === "story" ? 960 : 540,
@@ -131,7 +126,6 @@ export default function EditorPage() {
               />
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -168,7 +162,7 @@ function BodyFields({ card, format, update }: { card: CardData; format: "feed" |
 function Field({ label, placeholder, value, onChange }: { label: string; placeholder: string; value: string; onChange: (v: string) => void }) {
   return (
     <div>
-      <label style={{ display: "block", fontSize: 12, color: "#7A7A72", marginBottom: 6, fontWeight: 500 }}>{label}</label>
+      <label className="label-sm">{label}</label>
       <input className="input" placeholder={placeholder} value={value} onChange={(e) => onChange(e.target.value)} />
     </div>
   );
@@ -182,9 +176,9 @@ function TextareaField({ label, placeholder, value, onChange, maxChars }: { labe
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-        <label style={{ fontSize: 12, color: "#7A7A72", fontWeight: 500 }}>{label}</label>
+        <label className="label-sm" style={{ marginBottom: 0 }}>{label}</label>
         {maxChars && (
-          <span style={{ fontSize: 11, color: isOver ? "#e05252" : isWarn ? "#C4873A" : "#BBBBBB", fontFamily: '"Suit", sans-serif' }}>
+          <span style={{ fontSize: 11, color: isOver ? "#e05252" : isWarn ? "#C4873A" : "#BBBBBB" }}>
             {len} / {maxChars}
           </span>
         )}
@@ -198,7 +192,7 @@ function TextareaField({ label, placeholder, value, onChange, maxChars }: { labe
         style={{ resize: "vertical", borderColor: isOver ? "#e05252" : undefined }}
       />
       {isOver && (
-        <p style={{ fontSize: 11, color: "#e05252", marginTop: 4, fontFamily: '"Suit", sans-serif' }}>
+        <p className="error-text" style={{ marginTop: 4 }}>
           카드에서 내용이 잘릴 수 있습니다 ({Math.abs(remaining!)}자 초과)
         </p>
       )}

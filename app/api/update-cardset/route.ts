@@ -1,26 +1,22 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
-import { createServiceClient } from "@/lib/supabase";
+import { getServiceClient, errorResponse, okResponse } from "@/lib/api-utils";
 
 export async function POST(req: NextRequest) {
   try {
     const { id, ...updates } = await req.json() as {
-      id: string;
-      title?: string;
-      series?: string;
-      scripture?: string;
-      summary?: string;
-      youtube_url?: string | null;
-      date?: string;
+      id: string; title?: string; series?: string; scripture?: string;
+      summary?: string; youtube_url?: string | null; date?: string;
     };
-    const supabase = createServiceClient();
+    if (!id) return errorResponse("ID 누락", 400);
 
+    const supabase = getServiceClient();
     const { error } = await supabase.from("cardsets").update(updates).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return errorResponse(error.message);
 
     revalidatePath("/archive");
-    return NextResponse.json({ ok: true });
+    return okResponse();
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    return errorResponse(String(e));
   }
 }

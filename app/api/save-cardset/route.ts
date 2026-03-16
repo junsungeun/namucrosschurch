@@ -1,24 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
-import { createServiceClient } from "@/lib/supabase";
+import { getServiceClient, errorResponse, okResponse } from "@/lib/api-utils";
 
 export async function POST(req: NextRequest) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) {
-    return NextResponse.json({ error: `환경변수 미설정: URL=${!!supabaseUrl}, KEY=${!!serviceKey}` }, { status: 500 });
-  }
-
   try {
     const { images, meta } = await req.json() as {
-      images: string[]; // base64 PNG strings
+      images: string[];
       meta: {
         date: string; title: string; series?: string; scripture?: string;
         summary?: string; youtube_url?: string | null; format: string;
       };
     };
 
-    const supabase = createServiceClient();
+    if (!images?.length || !meta?.title) return errorResponse("필수 데이터 누락", 400);
+
+    const supabase = getServiceClient();
     const cardUrls: string[] = [];
 
     for (let i = 0; i < images.length; i++) {
@@ -30,7 +26,7 @@ export async function POST(req: NextRequest) {
         .from("cards")
         .upload(filename, buffer, { contentType: "image/png" });
 
-      if (error) return NextResponse.json({ error: `스토리지: ${error.message}` }, { status: 500 });
+      if (error) return errorResponse(`스토리지: ${error.message}`);
 
       const { data: urlData } = supabase.storage.from("cards").getPublicUrl(data.path);
       cardUrls.push(urlData.publicUrl);
@@ -42,11 +38,11 @@ export async function POST(req: NextRequest) {
       card_urls: cardUrls,
     });
 
-    if (insertError) return NextResponse.json({ error: `DB: ${insertError.message}` }, { status: 500 });
+    if (insertError) return errorResponse(`DB: ${insertError.message}`);
 
     revalidatePath("/archive");
-    return NextResponse.json({ ok: true, cardUrls });
+    return okResponse({ cardUrls });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    return errorResponse(String(e));
   }
 }

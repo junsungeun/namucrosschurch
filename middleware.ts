@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // 로그인 없이 접근 가능한 경로
-const PUBLIC = ["/login", "/article", "/api"];
+const PUBLIC = ["/login", "/article", "/api/"];
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
