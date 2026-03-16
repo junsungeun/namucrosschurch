@@ -30,10 +30,7 @@ export async function POST(req: NextRequest) {
         .from("cards")
         .upload(filename, buffer, { contentType: "image/png" });
 
-      if (error) {
-        const k = serviceKey ?? "";
-        return NextResponse.json({ error: `스토리지: ${error.message} [key: ${k.slice(0,10)}...${k.slice(-6)}, len:${k.length}]` }, { status: 500 });
-      }
+      if (error) return NextResponse.json({ error: `스토리지: ${error.message}` }, { status: 500 });
 
       const { data: urlData } = supabase.storage.from("cards").getPublicUrl(data.path);
       cardUrls.push(urlData.publicUrl);

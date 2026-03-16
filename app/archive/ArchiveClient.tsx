@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { CardSet } from "@/lib/supabase";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,12 +9,26 @@ type Props = { grouped: Record<string, CardSet[]> };
 
 export default function ArchiveClient({ grouped }: Props) {
   const router = useRouter();
-  const [deleting, setDeleting] = useState<string | null>(null);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<CardSet>>({});
   const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // 외부 클릭 시 메뉴 닫기
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenu(null);
+      }
+    }
+    if (openMenu) document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [openMenu]);
 
   async function redownload(cs: CardSet) {
+    setOpenMenu(null);
     const JSZip = (await import("jszip")).default;
     const zip = new JSZip();
     for (let i = 0; i < cs.card_urls.length; i++) {
@@ -31,33 +45,19 @@ export default function ArchiveClient({ grouped }: Props) {
   }
 
   function copyArticleLink(id: string) {
+    setOpenMenu(null);
     const url = `${window.location.origin}/article/${id}`;
     navigator.clipboard.writeText(url);
     alert("링크가 복사되었습니다!");
   }
 
-  async function handleDelete(cs: CardSet) {
-    if (!confirm(`"${cs.title}" 카드를 삭제하시겠습니까?`)) return;
-    setDeleting(cs.id);
-    try {
-      const res = await fetch("/api/delete-cardset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: cs.id, card_urls: cs.card_urls }),
-      });
-      const data = await res.json();
-      if (!res.ok) { alert(`삭제 실패: ${data.error}`); return; }
-      router.refresh();
-    } catch (e) {
-      alert(`삭제 오류: ${e}`);
-    } finally {
-      setDeleting(null);
-    }
-  }
-
   function startEdit(cs: CardSet) {
+    setOpenMenu(null);
     setEditing(cs.id);
-    setEditForm({ title: cs.title, series: cs.series ?? "", scripture: cs.scripture ?? "", summary: cs.summary ?? "", youtube_url: cs.youtube_url ?? "", date: cs.date });
+    setEditForm({
+      title: cs.title, series: cs.series ?? "", scripture: cs.scripture ?? "",
+      summary: cs.summary ?? "", youtube_url: cs.youtube_url ?? "", date: cs.date,
+    });
   }
 
   async function handleUpdate(id: string) {
@@ -79,6 +79,26 @@ export default function ArchiveClient({ grouped }: Props) {
     }
   }
 
+  async function handleDelete(cs: CardSet) {
+    setOpenMenu(null);
+    if (!confirm(`"${cs.title}" 카드를 삭제하시겠습니까?`)) return;
+    setDeleting(cs.id);
+    try {
+      const res = await fetch("/api/delete-cardset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: cs.id, card_urls: cs.card_urls }),
+      });
+      const data = await res.json();
+      if (!res.ok) { alert(`삭제 실패: ${data.error}`); return; }
+      router.refresh();
+    } catch (e) {
+      alert(`삭제 오류: ${e}`);
+    } finally {
+      setDeleting(null);
+    }
+  }
+
   const inputStyle = {
     fontFamily: '"Suit", sans-serif', fontSize: 13, padding: "6px 10px",
     border: "1px solid rgba(0,0,0,0.12)", borderRadius: 6, width: "100%",
@@ -90,6 +110,13 @@ export default function ArchiveClient({ grouped }: Props) {
     marginBottom: 2, display: "block",
   } as const;
 
+  const menuItemStyle = {
+    display: "block", width: "100%", padding: "9px 16px", fontSize: 13,
+    fontFamily: '"Suit", sans-serif', color: "#1E1E1C", background: "none",
+    border: "none", textAlign: "left" as const, cursor: "pointer",
+    whiteSpace: "nowrap" as const,
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 40 }}>
       {Object.entries(grouped).map(([month, items]) => (
@@ -97,10 +124,8 @@ export default function ArchiveClient({ grouped }: Props) {
           <div style={{
             fontFamily: '"GMarketSans", sans-serif',
             fontSize: 13, fontWeight: 700,
-            color: "#7A7A72",
-            letterSpacing: "0.05em",
-            marginBottom: 16,
-            paddingBottom: 10,
+            color: "#7A7A72", letterSpacing: "0.05em",
+            marginBottom: 16, paddingBottom: 10,
             borderBottom: "1px solid rgba(0,0,0,0.06)",
           }}>
             {month}
@@ -108,7 +133,7 @@ export default function ArchiveClient({ grouped }: Props) {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {items.map((cs) => (
               <div key={cs.id}>
-                <div className="card-box" style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                <div className="card-box" style={{ display: "flex", gap: 16, alignItems: "center", opacity: deleting === cs.id ? 0.4 : 1, transition: "opacity 0.2s" }}>
                   {/* 썸네일 */}
                   <div style={{ width: 72, height: 72, borderRadius: 8, overflow: "hidden", background: "#2D5A3D", flexShrink: 0 }}>
                     {cs.card_urls?.[0] ? (
@@ -130,30 +155,61 @@ export default function ArchiveClient({ grouped }: Props) {
                     </div>
                   </div>
 
-                  {/* 액션 버튼 */}
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" }}>
-                    {cs.youtube_url && (
-                      <a href={cs.youtube_url} target="_blank" rel="noopener noreferrer" className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: 12 }}>
-                        ▶ 설교
-                      </a>
-                    )}
-                    <button onClick={() => redownload(cs)} className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: 12 }}>
-                      ↓ 다운로드
-                    </button>
-                    <button onClick={() => copyArticleLink(cs.id)} className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: 12 }}>
-                      🔗 아티클
-                    </button>
-                    <button onClick={() => startEdit(cs)} className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: 12 }}>
-                      ✏️ 수정
-                    </button>
+                  {/* ⋯ 드롭다운 */}
+                  <div style={{ position: "relative", flexShrink: 0 }} ref={openMenu === cs.id ? menuRef : undefined}>
                     <button
-                      onClick={() => handleDelete(cs)}
-                      disabled={deleting === cs.id}
-                      className="btn btn-secondary"
-                      style={{ padding: "6px 12px", fontSize: 12, color: "#e53e3e" }}
+                      onClick={() => setOpenMenu(openMenu === cs.id ? null : cs.id)}
+                      style={{
+                        background: "none", border: "none", cursor: "pointer",
+                        padding: "6px 10px", fontSize: 18, color: "#7A7A72",
+                        lineHeight: 1, letterSpacing: "0.1em",
+                      }}
                     >
-                      {deleting === cs.id ? "삭제 중..." : "🗑 삭제"}
+                      ⋯
                     </button>
+                    {openMenu === cs.id && (
+                      <div style={{
+                        position: "absolute", right: 0, top: "100%", zIndex: 10,
+                        background: "#fff", borderRadius: 10, padding: "6px 0",
+                        boxShadow: "0 4px 20px rgba(0,0,0,0.12)", border: "1px solid rgba(0,0,0,0.06)",
+                        minWidth: 150,
+                      }}>
+                        {cs.youtube_url && (
+                          <a href={cs.youtube_url} target="_blank" rel="noopener noreferrer"
+                            style={{ ...menuItemStyle, textDecoration: "none" }}
+                            onMouseEnter={e => (e.currentTarget.style.background = "#F5F5F3")}
+                            onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                          >
+                            ▶ 설교보기
+                          </a>
+                        )}
+                        <button onClick={() => redownload(cs)} style={menuItemStyle}
+                          onMouseEnter={e => (e.currentTarget.style.background = "#F5F5F3")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                        >
+                          ↓ 다운로드
+                        </button>
+                        <button onClick={() => copyArticleLink(cs.id)} style={menuItemStyle}
+                          onMouseEnter={e => (e.currentTarget.style.background = "#F5F5F3")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                        >
+                          🔗 아티클 링크
+                        </button>
+                        <button onClick={() => startEdit(cs)} style={menuItemStyle}
+                          onMouseEnter={e => (e.currentTarget.style.background = "#F5F5F3")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                        >
+                          ✏️ 수정
+                        </button>
+                        <div style={{ height: 1, background: "rgba(0,0,0,0.06)", margin: "4px 0" }} />
+                        <button onClick={() => handleDelete(cs)} style={{ ...menuItemStyle, color: "#e53e3e" }}
+                          onMouseEnter={e => (e.currentTarget.style.background = "#FFF5F5")}
+                          onMouseLeave={e => (e.currentTarget.style.background = "none")}
+                        >
+                          🗑 삭제
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
