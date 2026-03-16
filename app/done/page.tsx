@@ -13,7 +13,20 @@ export default function DonePage() {
   const [saveError, setSaveError] = useState<string | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const coverCard = cards[0];
+  const coverCard = cards[0] ?? { id: "empty", type: "cover" as const, title: "", date: "" };
+
+  if (!cards.length) {
+    return (
+      <div className="page-shell">
+        <PageHeader title="생성 완료" />
+        <main className="page-main page-main--wide" style={{ textAlign: "center", paddingTop: 120 }}>
+          <h1 className="heading-lg">카드 데이터가 없습니다</h1>
+          <p className="sub-text" style={{ marginBottom: 24 }}>에디터에서 카드를 먼저 만들어주세요</p>
+          <Link href="/editor" className="btn btn-primary">에디터로 이동</Link>
+        </main>
+      </div>
+    );
+  }
 
   async function downloadCard(index: number) {
     const html2canvas = (await import("html2canvas")).default;

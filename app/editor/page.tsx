@@ -12,7 +12,8 @@ export default function EditorPage() {
   } = useEditorStore();
 
   const router = useRouter();
-  const card = cards[currentCard];
+  const safeIndex = currentCard >= cards.length ? 0 : currentCard;
+  const card = cards[safeIndex];
   const coverCard = cards[0];
 
   function handleMake() {
