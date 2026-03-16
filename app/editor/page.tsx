@@ -150,7 +150,7 @@ function CoverFields({ card, update }: { card: CardData; update: (d: Partial<Car
 }
 
 function BodyFields({ card, format, update }: { card: CardData; format: "feed" | "story"; update: (d: Partial<CardData>) => void }) {
-  const maxChars = format === "story" ? 600 : 280;
+  const maxChars = format === "story" ? 600 : 378;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <Field label="소제목" placeholder="이 카드의 핵심 포인트" value={card.subtitle ?? ""} onChange={(v) => update({ subtitle: v })} />

@@ -27,9 +27,9 @@ function FeedMockup({ card, templateColor, templateIsLight, cardIndex, totalCard
       {/* 프로필 헤더 */}
       <ProfileHeader />
 
-      {/* 카드 (375x375) — 540px 카드를 0.694 스케일 */}
+      {/* 카드 (375x375) — 1080px 카드를 375/1080 = 0.347 스케일 */}
       <div style={{ width: 375, height: 375, overflow: "hidden", position: "relative" }}>
-        <div style={{ transform: "scale(0.694)", transformOrigin: "top left", width: 540, height: 540, position: "absolute", top: 0, left: 0 }}>
+        <div style={{ transform: "scale(0.347)", transformOrigin: "top left", width: 1080, height: 1080, position: "absolute", top: 0, left: 0 }}>
           <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format="feed" cardIndex={cardIndex} totalCards={totalCards} seriesName={seriesName} />
         </div>
       </div>
@@ -42,9 +42,9 @@ function FeedMockup({ card, templateColor, templateIsLight, cardIndex, totalCard
 
 /* ── 스토리 목업 (9:16) ── */
 function StoryMockup({ card, templateColor, templateIsLight, cardIndex, totalCards, seriesName }: Omit<Props, "format">) {
-  // 카드 실제 크기: 540×960 (9:16)
-  // 목업 표시 크기: 375×667
-  const scale = 375 / 540; // 0.694 — 가로 맞춤
+  // 카드 실제 크기: 1080×1920
+  // 목업 표시 크기: 375×667 (9:16) → scale = 375/1080 = 0.347
+  const scale = 375 / 1080;
 
   return (
     <div style={{ background: "#000", borderRadius: 12, width: 375, height: 667, fontFamily: "-apple-system, sans-serif", overflow: "hidden", position: "relative" }}>
@@ -66,7 +66,7 @@ function StoryMockup({ card, templateColor, templateIsLight, cardIndex, totalCar
 
       {/* 카드 이미지 — 540×960을 375×667로 축소 */}
       <div style={{ width: 375, height: 667, overflow: "hidden", position: "relative" }}>
-        <div style={{ transform: `scale(${scale})`, transformOrigin: "top left", width: 540, height: 960, position: "absolute", top: 0, left: 0 }}>
+        <div style={{ transform: `scale(${scale})`, transformOrigin: "top left", width: 1080, height: 1920, position: "absolute", top: 0, left: 0, flexShrink: 0 }}>
           <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format="story" cardIndex={cardIndex} totalCards={totalCards} seriesName={seriesName} />
         </div>
       </div>
