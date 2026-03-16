@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display } from "next/font/google";
+import ToastProvider from "@/components/ToastProvider";
 import "./globals.css";
 
 const dmSerif = DM_Serif_Display({
@@ -17,7 +18,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko" className={dmSerif.variable}>
-      <body>{children}</body>
+      <body>
+        <ToastProvider>{children}</ToastProvider>
+        <div id="modal-root" />
+        <div id="toast-root" />
+      </body>
     </html>
   );
 }

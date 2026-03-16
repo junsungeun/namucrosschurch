@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useEditorStore, CardData } from "@/lib/store";
 import CardPreview from "@/components/CardPreview";
 import PageHeader from "@/components/PageHeader";
@@ -15,6 +16,18 @@ export default function EditorPage() {
   const safeIndex = currentCard >= cards.length ? 0 : currentCard;
   const card = cards[safeIndex];
   const coverCard = cards[0];
+  const [mobileTab, setMobileTab] = useState<"input" | "preview">("input");
+
+  // 이탈 경고
+  useEffect(() => {
+    const hasContent = cards.some(c =>
+      (c.title && c.title.trim()) || (c.content && c.content.trim()) || (c.subtitle && c.subtitle.trim())
+    );
+    if (!hasContent) return;
+    function handleBeforeUnload(e: BeforeUnloadEvent) { e.preventDefault(); }
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [cards]);
 
   function handleMake() {
     router.push("/done");
@@ -24,9 +37,15 @@ export default function EditorPage() {
     <div className="editor-shell">
       <PageHeader title="에디터" />
 
+      {/* 모바일 탭 토글 */}
+      <div className="editor-mobile-tabs">
+        <button className={`editor-mobile-tab${mobileTab === "input" ? " editor-mobile-tab--active" : ""}`} onClick={() => setMobileTab("input")}>입력</button>
+        <button className={`editor-mobile-tab${mobileTab === "preview" ? " editor-mobile-tab--active" : ""}`} onClick={() => setMobileTab("preview")}>미리보기</button>
+      </div>
+
       <div className="editor-grid">
         {/* 좌: 입력 패널 */}
-        <div className="editor-panel">
+        <div className={`editor-panel${mobileTab !== "input" ? " editor-panel--hidden" : ""}`}>
 
           {/* 카드 탭 */}
           <div>
@@ -91,7 +110,7 @@ export default function EditorPage() {
         </div>
 
         {/* 우: 미리보기 패널 */}
-        <div className="editor-preview">
+        <div className={`editor-preview${mobileTab !== "preview" ? " editor-panel--hidden" : ""}`}>
           {/* 카드 인디케이터 */}
           <div className="card-indicator">
             {cards.map((_, i) => (

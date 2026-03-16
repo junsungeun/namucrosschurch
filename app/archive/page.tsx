@@ -39,8 +39,18 @@ export default async function ArchivePage() {
           <Link href="/editor" className="btn btn-primary">새로 만들기 +</Link>
         </div>
         {cardsets.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "80px 0", color: "var(--text-muted)", fontSize: 15 }}>
-            아직 저장된 카드가 없습니다
+          <div className="empty-state">
+            <div className="empty-state-icon">
+              <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                <rect x="8" y="12" width="48" height="40" rx="4" stroke="var(--border)" strokeWidth="2" fill="none" />
+                <path d="M8 22H56" stroke="var(--border)" strokeWidth="2" />
+                <circle cx="32" cy="36" r="8" stroke="var(--text-muted)" strokeWidth="1.5" fill="none" opacity="0.4" />
+                <path d="M28 36L31 39L36 33" stroke="var(--text-muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.4" />
+              </svg>
+            </div>
+            <p className="empty-state-text">아직 저장된 카드가 없습니다</p>
+            <p className="empty-state-sub">에디터에서 말씀 카드를 만들어보세요</p>
+            <Link href="/editor" className="btn btn-primary" style={{ marginTop: 16 }}>카드 만들기</Link>
           </div>
         ) : (
           <ArchiveClient grouped={grouped} />

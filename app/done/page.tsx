@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { useEditorStore, CardData } from "@/lib/store";
 import CardPreview from "@/components/CardPreview";
 import PageHeader from "@/components/PageHeader";
+import Modal from "@/components/Modal";
 import Link from "next/link";
 
 export default function DonePage() {
@@ -174,6 +175,34 @@ export default function DonePage() {
           <Link href="/archive" className="btn btn-primary">보관함 보기</Link>
         </div>
       </main>
+
+      {/* 로딩 오버레이 */}
+      {saving && (
+        <div className="loading-overlay">
+          <div className="loading-content">
+            <div className="spinner" />
+            <p className="loading-text">카드를 저장하고 있습니다...</p>
+          </div>
+        </div>
+      )}
+
+      {/* 저장 완료 모달 */}
+      <Modal open={saved} onClose={() => setSaved(false)} width={360}>
+        <div style={{ textAlign: "center" }}>
+          <div className="modal-success-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="24" fill="var(--primary-lt)" />
+              <path d="M15 24L21 30L33 18" stroke="var(--primary)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <h2 className="modal-title" style={{ textAlign: "center", marginTop: 16 }}>저장 완료</h2>
+          <p className="modal-body" style={{ textAlign: "center" }}>카드가 보관함에 저장되었습니다</p>
+          <div className="modal-actions" style={{ justifyContent: "center" }}>
+            <Link href="/archive" className="btn btn-primary">보관함 가기</Link>
+            <Link href="/" className="btn btn-secondary">메인으로</Link>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
