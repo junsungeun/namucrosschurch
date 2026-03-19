@@ -72,7 +72,7 @@ export default function EditorPage() {
                   {i === 0 ? "표지" : `${i}번`}
                 </button>
               ))}
-              {cards.length < 5 && (
+              {cards.length < 20 && (
                 <button onClick={addCard} className="btn btn-secondary" style={{ padding: "6px 12px", fontSize: 13 }}>
                   + 추가
                 </button>
@@ -159,7 +159,7 @@ function CoverFields({ card, update }: { card: CardData; update: (d: Partial<Car
 }
 
 function BodyFields({ card, format, update }: { card: CardData; format: "feed" | "story"; update: (d: Partial<CardData>) => void }) {
-  const maxChars = format === "story" ? 600 : 378;
+  const maxChars = format === "story" ? 700 : 478;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <Field label="소제목" placeholder="이 카드의 핵심 포인트" value={card.subtitle ?? ""} onChange={(v) => update({ subtitle: v })} />

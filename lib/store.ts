@@ -69,7 +69,7 @@ export const useEditorStore = create<EditorState>()(
         })),
       addCard: () =>
         set((s) => {
-          if (s.cards.length >= 5) return s;
+          if (s.cards.length >= 20) return s;
           const newCard: CardData = {
             id: `card-${Date.now()}`,
             type: "body",
