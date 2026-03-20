@@ -39,7 +39,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 type Section = { subtitle?: string; paragraphs: string[] };
 
-/** cards_data JSON → 섹션 배열 */
 function sectionsFromCardsData(data: CardTextData[]): Section[] {
   return data.map((card) => ({
     subtitle: card.subtitle || undefined,
@@ -47,11 +46,9 @@ function sectionsFromCardsData(data: CardTextData[]): Section[] {
   }));
 }
 
-/** summary 텍스트 → 섹션 배열 (레거시 폴백) */
 function sectionsFromSummary(summary: string): Section[] {
   const blocks = summary.split("\n\n").filter(Boolean);
   const sections: Section[] = [];
-
   for (const block of blocks) {
     const lines = block.split("\n").filter(Boolean);
     if (lines.length >= 2 && lines[0].length <= 30) {
@@ -74,15 +71,15 @@ export default async function ArticlePage({ params }: Props) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontFamily: '"Suit", sans-serif',
-        color: "#999",
+        fontFamily: '"Pretendard", "Suit", -apple-system, sans-serif',
+        color: "#666",
+        background: "#111",
       }}>
         말씀 카드를 찾을 수 없습니다
       </div>
     );
   }
 
-  // cards_data 우선, 없으면 summary 폴백
   const sections = cs.cards_data?.length
     ? sectionsFromCardsData(cs.cards_data)
     : cs.summary
@@ -92,284 +89,300 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 
-        .article-page {
-          background: #fff;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        .a-page {
+          background: #111;
           min-height: 100vh;
+          color: #E5E5E5;
+          font-family: 'Pretendard Variable', 'Pretendard', -apple-system, 'Suit', sans-serif;
+          -webkit-font-smoothing: antialiased;
         }
 
-        /* 히어로 영역 */
-        .article-hero {
-          padding: 120px 24px 60px;
-          max-width: 640px;
+        /* 상단 네비 */
+        .a-nav {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          z-index: 10;
+          padding: 20px 24px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: linear-gradient(to bottom, rgba(17,17,17,0.95) 60%, transparent);
+        }
+
+        .a-nav-brand {
+          font-size: 14px;
+          font-weight: 700;
+          color: #fff;
+          letter-spacing: -0.02em;
+        }
+
+        .a-nav-link {
+          font-size: 12px;
+          color: rgba(255,255,255,0.5);
+          text-decoration: none;
+          font-weight: 500;
+        }
+
+        .a-nav-link:hover { color: rgba(255,255,255,0.8); }
+
+        /* 히어로 */
+        .a-hero {
+          padding: 100px 24px 48px;
+          max-width: 680px;
           margin: 0 auto;
         }
 
-        .article-label {
-          font-family: 'Suit', sans-serif;
-          font-size: 11px;
+        .a-tag {
+          display: inline-block;
+          font-size: 12px;
           font-weight: 600;
-          letter-spacing: 0.12em;
-          text-transform: uppercase;
           color: #3D6B4F;
-          margin-bottom: 28px;
+          letter-spacing: 0.06em;
+          margin-bottom: 20px;
+          padding: 6px 12px;
+          background: rgba(61, 107, 79, 0.12);
+          border-radius: 4px;
         }
 
-        .article-title {
-          font-family: 'Noto Serif KR', serif;
-          font-size: clamp(28px, 5vw, 42px);
-          font-weight: 700;
-          color: #1A1A1A;
+        .a-title {
+          font-size: clamp(26px, 5vw, 36px);
+          font-weight: 800;
+          color: #fff;
           line-height: 1.35;
-          letter-spacing: -0.025em;
-          margin: 0 0 24px;
+          letter-spacing: -0.03em;
+          margin-bottom: 20px;
           word-break: keep-all;
         }
 
-        .article-meta {
+        .a-meta {
           display: flex;
           align-items: center;
-          gap: 8px;
-          font-family: 'Suit', sans-serif;
-          font-size: 13px;
-          color: #999;
+          gap: 12px;
+          font-size: 14px;
+          color: rgba(255,255,255,0.4);
+          font-weight: 400;
         }
 
-        .article-meta-dot {
-          width: 3px;
-          height: 3px;
-          border-radius: 50%;
-          background: #ccc;
+        .a-meta-sep {
+          width: 1px;
+          height: 12px;
+          background: rgba(255,255,255,0.15);
         }
 
-        /* 성경구절 인용 */
-        .article-scripture {
-          max-width: 640px;
+        /* 성경구절 */
+        .a-quote {
+          max-width: 680px;
           margin: 0 auto;
-          padding: 0 24px 48px;
+          padding: 0 24px 40px;
         }
 
-        .article-scripture-inner {
+        .a-quote-inner {
+          padding: 20px 24px;
+          background: rgba(61, 107, 79, 0.08);
           border-left: 3px solid #3D6B4F;
-          padding: 16px 0 16px 20px;
-          font-family: 'Noto Serif KR', serif;
-          font-size: 16px;
-          color: #3D6B4F;
+          border-radius: 0 8px 8px 0;
+          font-size: 15px;
+          color: rgba(255,255,255,0.7);
           line-height: 1.7;
-          font-style: italic;
+          font-weight: 500;
         }
 
         /* 구분선 */
-        .article-divider {
-          max-width: 640px;
+        .a-hr {
+          max-width: 680px;
           margin: 0 auto;
           padding: 0 24px;
         }
 
-        .article-divider-line {
+        .a-hr-line {
           height: 1px;
-          background: #E8E8E8;
+          background: rgba(255,255,255,0.08);
         }
 
-        /* 본문 영역 */
-        .article-body {
-          max-width: 640px;
+        /* 본문 */
+        .a-body {
+          max-width: 680px;
           margin: 0 auto;
-          padding: 48px 24px 40px;
+          padding: 40px 24px;
         }
 
-        .article-section {
-          margin-bottom: 40px;
+        .a-section {
+          margin-bottom: 36px;
         }
 
-        .article-section:last-child {
+        .a-section:last-child {
           margin-bottom: 0;
         }
 
-        .article-subtitle {
-          font-family: 'Suit', sans-serif;
-          font-size: 13px;
+        .a-sub {
+          font-size: 18px;
           font-weight: 700;
-          letter-spacing: 0.04em;
-          color: #3D6B4F;
+          color: #fff;
           margin-bottom: 16px;
-          padding-bottom: 8px;
-          border-bottom: 1px solid rgba(61, 107, 79, 0.15);
-          display: inline-block;
+          letter-spacing: -0.02em;
+          line-height: 1.4;
         }
 
-        .article-paragraph {
-          font-family: 'Noto Serif KR', serif;
-          font-size: 17px;
-          color: #2A2A2A;
-          line-height: 2;
+        .a-p {
+          font-size: 16px;
+          color: rgba(255,255,255,0.72);
+          line-height: 1.85;
           word-break: keep-all;
-          margin-bottom: 20px;
+          margin-bottom: 16px;
           letter-spacing: -0.01em;
+          font-weight: 400;
         }
 
-        .article-paragraph:last-child {
+        .a-p:last-child {
           margin-bottom: 0;
         }
 
-        /* 유튜브 버튼 */
-        .article-youtube {
-          max-width: 640px;
+        /* 유튜브 */
+        .a-yt {
+          max-width: 680px;
           margin: 0 auto;
-          padding: 8px 24px 48px;
+          padding: 12px 24px 48px;
         }
 
-        .article-youtube-btn {
+        .a-yt-btn {
           display: inline-flex;
           align-items: center;
-          gap: 12px;
-          background: #1A1A1A;
-          color: #fff;
+          gap: 10px;
+          background: #fff;
+          color: #111;
           border-radius: 100px;
-          padding: 16px 32px;
-          font-family: 'Suit', sans-serif;
+          padding: 14px 28px;
           font-size: 14px;
           font-weight: 600;
           text-decoration: none;
-          letter-spacing: 0.02em;
-          transition: background 0.2s;
+          letter-spacing: -0.01em;
+          transition: opacity 0.2s;
         }
 
-        .article-youtube-btn:hover {
-          background: #333;
-        }
+        .a-yt-btn:hover { opacity: 0.85; }
 
-        .article-youtube-icon {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: #fff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .article-youtube-icon svg {
-          margin-left: 2px;
+        .a-yt-icon {
+          width: 0;
+          height: 0;
+          border-left: 7px solid #111;
+          border-top: 5px solid transparent;
+          border-bottom: 5px solid transparent;
         }
 
         /* 푸터 */
-        .article-footer {
-          max-width: 640px;
+        .a-footer {
+          max-width: 680px;
           margin: 0 auto;
           padding: 0 24px 80px;
         }
 
-        .article-footer-inner {
-          border-top: 1px solid #E8E8E8;
-          padding-top: 32px;
+        .a-footer-inner {
+          border-top: 1px solid rgba(255,255,255,0.08);
+          padding-top: 28px;
           display: flex;
           align-items: center;
           justify-content: space-between;
         }
 
-        .article-footer-brand {
-          font-family: 'Noto Serif KR', serif;
-          font-size: 15px;
+        .a-footer-brand {
+          font-size: 14px;
           font-weight: 700;
-          color: #3D6B4F;
+          color: rgba(255,255,255,0.6);
+          letter-spacing: -0.02em;
         }
 
-        .article-footer-link {
-          font-family: 'Suit', sans-serif;
+        .a-footer-link {
           font-size: 12px;
-          color: #999;
+          color: rgba(255,255,255,0.3);
           text-decoration: none;
-          letter-spacing: 0.03em;
+          font-weight: 500;
         }
 
-        .article-footer-link:hover {
-          color: #666;
-        }
+        .a-footer-link:hover { color: rgba(255,255,255,0.5); }
 
-        /* 모바일 최적화 */
         @media (max-width: 480px) {
-          .article-hero { padding: 80px 20px 40px; }
-          .article-scripture { padding: 0 20px 36px; }
-          .article-body { padding: 36px 20px 32px; }
-          .article-youtube { padding: 8px 20px 36px; }
-          .article-footer { padding: 0 20px 60px; }
-          .article-divider { padding: 0 20px; }
-          .article-paragraph { font-size: 16px; line-height: 1.9; }
+          .a-hero { padding: 80px 20px 36px; }
+          .a-quote { padding: 0 20px 32px; }
+          .a-body { padding: 32px 20px; }
+          .a-yt { padding: 12px 20px 40px; }
+          .a-footer { padding: 0 20px 60px; }
+          .a-hr { padding: 0 20px; }
+          .a-p { font-size: 15px; line-height: 1.8; }
+          .a-title { margin-bottom: 16px; }
         }
       `}</style>
 
-      <div className="article-page">
+      <div className="a-page">
+        {/* 상단 네비 */}
+        <nav className="a-nav">
+          <span className="a-nav-brand">나무카드.</span>
+          <Link href="/" className="a-nav-link">나무십자가교회</Link>
+        </nav>
+
         {/* 히어로 */}
-        <div className="article-hero">
-          <div className="article-label">
-            나무십자가교회{cs.series ? ` · ${cs.series}` : ""}
+        <div className="a-hero">
+          <div className="a-tag">
+            {cs.series || "나무십자가교회"}
           </div>
-          <h1 className="article-title">{cs.title}</h1>
-          <div className="article-meta">
+          <h1 className="a-title">{cs.title}</h1>
+          <div className="a-meta">
             {cs.date && <span>{cs.date}</span>}
-            {cs.date && cs.scripture && <span className="article-meta-dot" />}
+            {cs.date && cs.scripture && <div className="a-meta-sep" />}
             {cs.scripture && <span>{cs.scripture}</span>}
           </div>
         </div>
 
-        {/* 성경구절 인용 블록 */}
+        {/* 성경구절 인용 */}
         {cs.scripture && (
-          <div className="article-scripture">
-            <div className="article-scripture-inner">
+          <div className="a-quote">
+            <div className="a-quote-inner">
               {cs.scripture}
             </div>
           </div>
         )}
 
         {/* 구분선 */}
-        <div className="article-divider">
-          <div className="article-divider-line" />
+        <div className="a-hr">
+          <div className="a-hr-line" />
         </div>
 
         {/* 본문 */}
         {sections.length > 0 && (
-          <div className="article-body">
+          <div className="a-body">
             {sections.map((sec, si) => (
-              <div key={si} className="article-section">
+              <div key={si} className="a-section">
                 {sec.subtitle && (
-                  <div className="article-subtitle">{sec.subtitle}</div>
+                  <h2 className="a-sub">{sec.subtitle}</h2>
                 )}
                 {sec.paragraphs.map((p, pi) => (
-                  <p key={pi} className="article-paragraph">{p}</p>
+                  <p key={pi} className="a-p">{p}</p>
                 ))}
               </div>
             ))}
           </div>
         )}
 
-        {/* 유튜브 버튼 */}
+        {/* 유튜브 */}
         {cs.youtube_url && (
-          <div className="article-youtube">
-            <a
-              href={cs.youtube_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="article-youtube-btn"
-            >
-              <span className="article-youtube-icon">
-                <svg width="8" height="10" viewBox="0 0 8 10" fill="none">
-                  <path d="M1 1L7 5L1 9V1Z" fill="#1A1A1A" stroke="#1A1A1A" strokeWidth="1.5" strokeLinejoin="round" />
-                </svg>
-              </span>
+          <div className="a-yt">
+            <a href={cs.youtube_url} target="_blank" rel="noopener noreferrer" className="a-yt-btn">
+              <span className="a-yt-icon" />
               설교 영상 보기
             </a>
           </div>
         )}
 
         {/* 푸터 */}
-        <div className="article-footer">
-          <div className="article-footer-inner">
-            <div className="article-footer-brand">나무카드.</div>
-            <Link href="/" className="article-footer-link">
-              나무십자가교회
-            </Link>
+        <div className="a-footer">
+          <div className="a-footer-inner">
+            <div className="a-footer-brand">나무카드.</div>
+            <Link href="/" className="a-footer-link">나무십자가교회</Link>
           </div>
         </div>
       </div>
