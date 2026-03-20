@@ -39,7 +39,7 @@ export default function ScrollProgress() {
           transition: width 0.12s linear;
         }
 
-        /* 데스크톱: 오른쪽 세로 직사각형 */
+        /* 데스크톱: 오른쪽 끝 전체 높이 세로 바 */
         .sp-side {
           display: none;
         }
@@ -50,20 +50,14 @@ export default function ScrollProgress() {
           }
 
           .sp-side {
-            display: block;
             position: fixed;
-            right: calc((100vw - 640px) / 2 - 80px);
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 50;
-          }
-
-          .sp-track {
-            width: 24px;
-            height: 340px;
+            display: block;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 100vh;
             background: #D6E4DA;
-            overflow: hidden;
-            position: relative;
+            z-index: 50;
           }
 
           .sp-fill {
@@ -75,12 +69,6 @@ export default function ScrollProgress() {
             transition: height 0.12s linear;
           }
         }
-
-        @media (min-width: 769px) and (max-width: 880px) {
-          .sp-side {
-            right: 8px;
-          }
-        }
       `}</style>
 
       {/* 모바일: 상단 가로 바 */}
@@ -88,11 +76,9 @@ export default function ScrollProgress() {
         <div className="sp-mobile-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      {/* 데스크톱: 오른쪽 세로 직사각형 */}
+      {/* 데스크톱: 오른쪽 끝 전체 높이 */}
       <div className="sp-side">
-        <div className="sp-track">
-          <div className="sp-fill" style={{ height: `${progress}%` }} />
-        </div>
+        <div className="sp-fill" style={{ height: `${progress}%` }} />
       </div>
     </>
   );
