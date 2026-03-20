@@ -5,6 +5,18 @@ import ScrollProgress from "@/app/article/[id]/ScrollProgress";
 import PageHeader from "@/components/PageHeader";
 
 export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  try {
+    const { data } = await supabase.from("articles").select("id, slug");
+    return (data ?? []).map((a: { id: string; slug?: string }) => ({
+      id: a.slug || a.id,
+    }));
+  } catch {
+    return [];
+  }
+}
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -272,34 +284,48 @@ export default async function ArticleViewPage({ params }: Props) {
           )}
 
           {/* 이전/다음 — 매거진 */}
-          {(prev || next) && (
-            <div className="a-nav-section">
-              <div className="a-nav-section-label">더 읽기</div>
-              <div className="a-nav-articles">
-                {prev ? (
-                  <Link href={`/articles/${prev.slug || prev.id}`} className="a-nav-item">
-                    <div className="a-nav-dir">
-                      <span className="a-nav-arrow">←</span>
-                      <span>이전 아티클</span>
-                    </div>
-                    <div className="a-nav-title">{prev.title}</div>
-                    <div className="a-nav-date">{prev.date}</div>
-                  </Link>
-                ) : <div />}
-                {prev && next && <div className="a-nav-divider" />}
-                {next ? (
-                  <Link href={`/articles/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
-                    <div className="a-nav-dir">
-                      <span>다음 아티클</span>
-                      <span className="a-nav-arrow">→</span>
-                    </div>
-                    <div className="a-nav-title">{next.title}</div>
-                    <div className="a-nav-date">{next.date}</div>
-                  </Link>
-                ) : <div />}
-              </div>
+          <div className="a-nav-section">
+            <div className="a-nav-section-label">더 읽기</div>
+            <div className="a-nav-articles">
+              {prev ? (
+                <Link href={`/articles/${prev.slug || prev.id}`} className="a-nav-item">
+                  <div className="a-nav-dir">
+                    <span className="a-nav-arrow">←</span>
+                    <span>이전 아티클</span>
+                  </div>
+                  <div className="a-nav-title">{prev.title}</div>
+                  <div className="a-nav-date">{prev.date}</div>
+                </Link>
+              ) : (
+                <Link href="/archive" className="a-nav-item">
+                  <div className="a-nav-dir">
+                    <span className="a-nav-arrow">←</span>
+                    <span>목록으로</span>
+                  </div>
+                  <div className="a-nav-title">아티클 전체 보기</div>
+                </Link>
+              )}
+              <div className="a-nav-divider" />
+              {next ? (
+                <Link href={`/articles/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
+                  <div className="a-nav-dir">
+                    <span>다음 아티클</span>
+                    <span className="a-nav-arrow">→</span>
+                  </div>
+                  <div className="a-nav-title">{next.title}</div>
+                  <div className="a-nav-date">{next.date}</div>
+                </Link>
+              ) : (
+                <Link href="/archive" className="a-nav-item a-nav-item--next">
+                  <div className="a-nav-dir">
+                    <span>목록으로</span>
+                    <span className="a-nav-arrow">→</span>
+                  </div>
+                  <div className="a-nav-title">아티클 전체 보기</div>
+                </Link>
+              )}
             </div>
-          )}
+          </div>
 
           {/* 푸터 */}
           <div className="a-footer-mini">

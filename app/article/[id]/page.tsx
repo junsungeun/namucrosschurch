@@ -365,34 +365,48 @@ export default async function ArticlePage({ params }: Props) {
           )}
 
           {/* 이전/다음 — 매거진 */}
-          {(prev || next) && (
-            <div className="a-nav-section">
-              <div className="a-nav-section-label">더 읽기</div>
-              <div className="a-nav-articles">
-                {prev ? (
-                  <Link href={`/article/${prev.slug || prev.id}`} className="a-nav-item">
-                    <div className="a-nav-dir">
-                      <span className="a-nav-arrow">←</span>
-                      <span>이전 말씀</span>
-                    </div>
-                    <div className="a-nav-title">{prev.title}</div>
-                    <div className="a-nav-date">{prev.date}</div>
-                  </Link>
-                ) : <div />}
-                {prev && next && <div className="a-nav-divider" />}
-                {next ? (
-                  <Link href={`/article/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
-                    <div className="a-nav-dir">
-                      <span>다음 말씀</span>
-                      <span className="a-nav-arrow">→</span>
-                    </div>
-                    <div className="a-nav-title">{next.title}</div>
-                    <div className="a-nav-date">{next.date}</div>
-                  </Link>
-                ) : <div />}
-              </div>
+          <div className="a-nav-section">
+            <div className="a-nav-section-label">더 읽기</div>
+            <div className="a-nav-articles">
+              {prev ? (
+                <Link href={`/article/${prev.slug || prev.id}`} className="a-nav-item">
+                  <div className="a-nav-dir">
+                    <span className="a-nav-arrow">←</span>
+                    <span>이전 말씀</span>
+                  </div>
+                  <div className="a-nav-title">{prev.title}</div>
+                  <div className="a-nav-date">{prev.date}</div>
+                </Link>
+              ) : (
+                <Link href="/archive" className="a-nav-item">
+                  <div className="a-nav-dir">
+                    <span className="a-nav-arrow">←</span>
+                    <span>목록으로</span>
+                  </div>
+                  <div className="a-nav-title">전체 말씀 보기</div>
+                </Link>
+              )}
+              <div className="a-nav-divider" />
+              {next ? (
+                <Link href={`/article/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
+                  <div className="a-nav-dir">
+                    <span>다음 말씀</span>
+                    <span className="a-nav-arrow">→</span>
+                  </div>
+                  <div className="a-nav-title">{next.title}</div>
+                  <div className="a-nav-date">{next.date}</div>
+                </Link>
+              ) : (
+                <Link href="/archive" className="a-nav-item a-nav-item--next">
+                  <div className="a-nav-dir">
+                    <span>목록으로</span>
+                    <span className="a-nav-arrow">→</span>
+                  </div>
+                  <div className="a-nav-title">전체 말씀 보기</div>
+                </Link>
+              )}
             </div>
-          )}
+          </div>
 
           {/* 미니 푸터 */}
           <div className="a-footer-mini">
