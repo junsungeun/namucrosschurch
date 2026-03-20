@@ -174,19 +174,6 @@ export default async function ArticlePage({ params }: Props) {
           background: #ddd;
         }
 
-        /* 커버 이미지 */
-        .a-cover {
-          max-width: 680px;
-          margin: 0 auto;
-          padding: 0 24px 40px;
-        }
-
-        .a-cover img {
-          width: 100%;
-          height: auto;
-          border-radius: 12px;
-        }
-
         /* 성경구절 */
         .a-quote {
           max-width: 680px;
@@ -320,7 +307,6 @@ export default async function ArticlePage({ params }: Props) {
 
         @media (max-width: 480px) {
           .a-hero { padding: 80px 20px 0; }
-          .a-cover { padding: 0 20px 32px; }
           .a-quote { padding: 0 20px 28px; }
           .a-body { padding: 32px 20px; }
           .a-yt { padding: 12px 20px 40px; }
@@ -349,13 +335,6 @@ export default async function ArticlePage({ params }: Props) {
             {cs.scripture && <span>{cs.scripture}</span>}
           </div>
         </div>
-
-        {/* 커버 카드 이미지 */}
-        {cs.card_urls?.[0] && (
-          <div className="a-cover">
-            <img src={cs.card_urls[0]} alt={cs.title} />
-          </div>
-        )}
 
         {/* 성경구절 인용 */}
         {cs.scripture && (
