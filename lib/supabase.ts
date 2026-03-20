@@ -47,6 +47,21 @@ export type CardSet = {
   created_at: string;
 };
 
+export type Article = {
+  id: string;
+  slug?: string;
+  title: string;
+  date: string;
+  series?: string;
+  scripture: string;
+  body?: string;
+  god_father?: string;
+  god_son?: string;
+  god_spirit?: string;
+  youtube_url?: string;
+  created_at: string;
+};
+
 /** 6자리 짧은 슬러그 생성 */
 export function generateSlug(): string {
   const chars = "abcdefghjkmnpqrstuvwxyz23456789";

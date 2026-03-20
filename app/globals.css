@@ -336,6 +336,18 @@ textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
 .card-html-body div,
 .card-html-body p { margin: 0; }
 
+/* ── 아티클 본문 타이포그래피 ── */
+.article-body { font-family: var(--f-body); font-size: 17px; line-height: 1.85; color: var(--text); }
+.article-body h1 { font-family: var(--f-head); font-size: 1.4em; font-weight: 700; margin: 1.5em 0 0.5em; }
+.article-body h2 { font-family: var(--f-head); font-size: 1.2em; font-weight: 700; margin: 1.3em 0 0.4em; }
+.article-body h3 { font-family: var(--f-head); font-size: 1.05em; font-weight: 700; margin: 1.1em 0 0.3em; }
+.article-body p  { margin: 0 0 1em; }
+.article-body strong { font-weight: 700; }
+.article-body em { font-style: italic; }
+
+/* bg-subtle 변수 */
+:root { --bg-subtle: #F5F4F0; }
+
 /* ══════ RESPONSIVE ══════ */
 
 @media (max-width: 768px) {
