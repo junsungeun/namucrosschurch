@@ -177,13 +177,22 @@ function BodyFields({ card, format, update }: { card: CardData; format: "feed" |
   );
 }
 
+const HIGHLIGHT_COLORS = [
+  { label: "초록", color: "rgba(61,107,79,0.35)" },
+  { label: "황토", color: "rgba(196,135,58,0.4)" },
+  { label: "하늘", color: "rgba(100,160,220,0.35)" },
+  { label: "분홍", color: "rgba(210,100,120,0.35)" },
+];
+
 function RichTextEditor({ label, value, onChange, maxChars, required }: {
   label: string; value: string; onChange: (v: string) => void; maxChars?: number; required?: boolean;
 }) {
+  const [hlColor, setHlColor] = useState(HIGHLIGHT_COLORS[0].color);
+
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Highlight.configure({ multicolor: false }),
+      Highlight.configure({ multicolor: true }),
     ],
     content: value || "",
     onUpdate({ editor }) {
@@ -241,14 +250,29 @@ function RichTextEditor({ label, value, onChange, maxChars, required }: {
         >
           <em style={{ fontStyle: "italic" }}>I</em>
         </button>
-        <button
-          type="button"
-          className={`rte-btn rte-btn--mark${editor?.isActive("highlight") ? " rte-btn--active" : ""}`}
-          onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleHighlight().run(); }}
-          title="마커 하이라이트"
-        >
-          <span className="rte-mark-preview">A</span>
-        </button>
+        {/* 하이라이트 컬러 선택 */}
+        {HIGHLIGHT_COLORS.map((c) => (
+          <button
+            key={c.color}
+            type="button"
+            className={`rte-btn rte-btn--hl${hlColor === c.color ? " rte-btn--active" : ""}`}
+            onMouseDown={(e) => {
+              e.preventDefault();
+              setHlColor(c.color);
+              editor?.chain().focus().toggleHighlight({ color: c.color }).run();
+            }}
+            title={`${c.label} 하이라이트`}
+          >
+            <span style={{
+              display: "inline-block",
+              width: 14,
+              height: 14,
+              borderRadius: 3,
+              background: c.color.replace(/[\d.]+\)$/, "0.9)"),
+              border: hlColor === c.color ? "2px solid rgba(0,0,0,0.3)" : "1.5px solid rgba(0,0,0,0.15)",
+            }} />
+          </button>
+        ))}
         <div className="rte-divider" />
         {([1, 2, 3] as const).map((level) => (
           <button

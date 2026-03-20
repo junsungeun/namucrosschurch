@@ -312,12 +312,13 @@ textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
 .ProseMirror strong { font-weight: 700; }
 .ProseMirror em { font-style: italic; }
 .ProseMirror mark {
-  background: none;
-  background-image: linear-gradient(transparent 55%, rgba(196, 135, 58, 0.4) 55%);
+  /* TipTap multicolor: background-color는 인라인으로 들어오므로 gradient 레이어만 추가 */
+  background-blend-mode: normal;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
   padding: 0 2px;
   color: inherit;
+  border-radius: 2px;
 }
 .rte-btn--active { background: rgba(0,0,0,0.1) !important; }
 .rte-divider { width: 1px; background: rgba(0,0,0,0.1); margin: 3px 2px; align-self: stretch; }
@@ -336,11 +337,11 @@ textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
 .card-html-body strong { font-weight: 700; }
 .card-html-body em { font-style: italic; }
 .card-html-body mark {
-  background: none;
-  background-image: linear-gradient(transparent 55%, rgba(196, 135, 58, 0.4) 55%);
+  /* background-color는 TipTap이 인라인으로 주입 */
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
-  padding: 0 3px;
+  padding: 0 4px;
+  border-radius: 3px;
   color: inherit;
 }
 .card-html-body div,
