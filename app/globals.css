@@ -318,10 +318,10 @@ textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
   padding: 0 2px;
   color: inherit;
 }
-.dm-green  { background-image: linear-gradient(transparent 55%, rgba(61,107,79,0.42) 55%);   }
-.dm-amber  { background-image: linear-gradient(transparent 55%, rgba(196,135,58,0.45) 55%);  }
-.dm-blue   { background-image: linear-gradient(transparent 55%, rgba(94,160,220,0.45) 55%);  }
-.dm-pink   { background-image: linear-gradient(transparent 55%, rgba(210,100,120,0.42) 55%); }
+.dm-green  { background-image: linear-gradient(transparent 55%, rgba(61,107,79,0.25) 55%);   }
+.dm-amber  { background-image: linear-gradient(transparent 55%, rgba(196,135,58,0.28) 55%);  }
+.dm-blue   { background-image: linear-gradient(transparent 55%, rgba(94,160,220,0.28) 55%);  }
+.dm-pink   { background-image: linear-gradient(transparent 55%, rgba(210,100,120,0.25) 55%); }
 .rte-btn--active { background: rgba(0,0,0,0.1) !important; }
 .rte-divider { width: 1px; background: rgba(0,0,0,0.1); margin: 3px 2px; align-self: stretch; }
 
