@@ -104,85 +104,111 @@ export default async function ArticlePage({ params }: Props) {
         }
 
         .a-wrap {
-          max-width: 680px;
+          max-width: 640px;
           margin: 0 auto;
           padding: 0 24px;
         }
 
         /* 헤더 */
         .a-header {
-          padding-top: 60px;
-          padding-bottom: 32px;
-          border-bottom: 1px solid #eee;
-          margin-bottom: 32px;
+          padding-top: 56px;
+          padding-bottom: 40px;
         }
 
         .a-series {
           font-size: 13px;
           font-weight: 600;
           color: #3D6B4F;
-          margin-bottom: 12px;
+          margin-bottom: 16px;
         }
 
         .a-title {
-          font-size: clamp(24px, 4.5vw, 32px);
+          font-size: clamp(26px, 5vw, 34px);
           font-weight: 700;
-          color: #1A1A1A;
+          color: #111;
           line-height: 1.4;
-          letter-spacing: -0.02em;
+          letter-spacing: -0.025em;
           margin-bottom: 16px;
           word-break: keep-all;
         }
 
         .a-meta {
           font-size: 14px;
-          color: #999;
+          color: #aaa;
+          line-height: 1.6;
         }
 
         .a-meta span + span::before {
           content: " · ";
         }
 
+        /* 헤더-본문 구분 */
+        .a-header-line {
+          height: 1px;
+          background: #eee;
+          margin-bottom: 40px;
+        }
+
         /* 성경구절 */
         .a-scripture {
-          padding: 16px 20px;
-          background: #f8f8f6;
+          padding: 20px 24px;
+          background: #f9f9f7;
           border-left: 3px solid #3D6B4F;
-          font-size: 14px;
+          font-size: 15px;
           color: #3D6B4F;
-          line-height: 1.6;
+          line-height: 1.65;
           font-weight: 500;
-          margin-bottom: 36px;
-          border-radius: 0 4px 4px 0;
+          margin-bottom: 48px;
+          border-radius: 0 6px 6px 0;
         }
 
         /* 본문 */
         .a-body {
-          padding-bottom: 40px;
+          padding-bottom: 48px;
         }
 
+        /* 섹션: 소제목이 있는 섹션은 상단에 가로선으로 구분 */
         .a-section {
-          margin-bottom: 32px;
-        }
-
-        .a-section:last-child {
           margin-bottom: 0;
         }
 
+        .a-section-divider {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 48px 0 36px;
+        }
+
+        .a-section-divider-line {
+          flex: 1;
+          height: 1px;
+          background: #e8e8e8;
+        }
+
+        .a-section-divider-icon {
+          width: 6px;
+          height: 6px;
+          background: #3D6B4F;
+          border-radius: 50%;
+          opacity: 0.4;
+        }
+
         .a-sub {
-          font-size: 17px;
+          font-size: 18px;
           font-weight: 700;
-          color: #1A1A1A;
-          margin-bottom: 12px;
-          line-height: 1.5;
+          color: #111;
+          margin-bottom: 16px;
+          line-height: 1.45;
+          letter-spacing: -0.02em;
         }
 
         .a-p {
-          font-size: 16px;
+          font-size: 16.5px;
           color: #333;
-          line-height: 1.8;
+          line-height: 1.85;
           word-break: keep-all;
-          margin-bottom: 12px;
+          text-align: left;
+          margin-bottom: 20px;
           letter-spacing: -0.01em;
         }
 
@@ -192,14 +218,14 @@ export default async function ArticlePage({ params }: Props) {
 
         /* 유튜브 */
         .a-yt {
-          padding-bottom: 40px;
+          padding-bottom: 48px;
         }
 
         .a-yt-btn {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: #1A1A1A;
+          background: #111;
           color: #fff;
           border-radius: 6px;
           padding: 12px 20px;
@@ -228,7 +254,7 @@ export default async function ArticlePage({ params }: Props) {
 
         .a-footer-link {
           font-size: 13px;
-          color: #999;
+          color: #aaa;
           text-decoration: none;
         }
 
@@ -236,8 +262,9 @@ export default async function ArticlePage({ params }: Props) {
 
         @media (max-width: 480px) {
           .a-wrap { padding: 0 20px; }
-          .a-header { padding-top: 48px; padding-bottom: 24px; margin-bottom: 24px; }
-          .a-p { font-size: 15px; }
+          .a-header { padding-top: 44px; padding-bottom: 32px; }
+          .a-p { font-size: 15.5px; line-height: 1.8; }
+          .a-section-divider { margin: 40px 0 28px; }
         }
       `}</style>
 
@@ -253,6 +280,8 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           </div>
 
+          <div className="a-header-line" />
+
           {/* 성경구절 */}
           {cs.scripture && (
             <div className="a-scripture">{cs.scripture}</div>
@@ -263,6 +292,14 @@ export default async function ArticlePage({ params }: Props) {
             <div className="a-body">
               {sections.map((sec, si) => (
                 <div key={si} className="a-section">
+                  {/* 두 번째 섹션부터 구분선 */}
+                  {si > 0 && (
+                    <div className="a-section-divider">
+                      <div className="a-section-divider-line" />
+                      <div className="a-section-divider-icon" />
+                      <div className="a-section-divider-line" />
+                    </div>
+                  )}
                   {sec.subtitle && <h2 className="a-sub">{sec.subtitle}</h2>}
                   {sec.paragraphs.map((p, pi) => (
                     <p key={pi} className="a-p">{p}</p>
