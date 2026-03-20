@@ -39,7 +39,7 @@ export default function ScrollProgress() {
           transition: width 0.12s linear;
         }
 
-        /* 데스크톱: 오른쪽 세로 바 */
+        /* 데스크톱: 본문 오른쪽 바로 옆 */
         .sp-side {
           display: none;
         }
@@ -52,9 +52,9 @@ export default function ScrollProgress() {
           .sp-side {
             position: fixed;
             display: block;
-            top: 60px;
-            right: 24px;
-            bottom: 60px;
+            top: 56px;
+            bottom: 0;
+            right: calc((100vw - 640px) / 2 - 28px);
             width: 12px;
             background: #D6E4DA;
             z-index: 50;
@@ -72,12 +72,12 @@ export default function ScrollProgress() {
         }
       `}</style>
 
-      {/* 모바일: 상단 가로 바 */}
+      {/* 모바일 */}
       <div className="sp-mobile">
         <div className="sp-mobile-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      {/* 데스크톱: 오른쪽 세로 바 */}
+      {/* 데스크톱 */}
       <div className="sp-side">
         <div className="sp-fill" style={{ height: `${progress}%` }} />
       </div>
