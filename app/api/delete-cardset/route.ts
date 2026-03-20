@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     const { error } = await supabase.from("cardsets").delete().eq("id", id);
     if (error) return errorResponse(error.message);
 
+    revalidatePath("/");
     revalidatePath("/archive");
     return okResponse();
   } catch (e) {

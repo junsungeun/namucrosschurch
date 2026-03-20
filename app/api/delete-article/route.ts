@@ -11,6 +11,7 @@ export async function POST(req: NextRequest) {
     const { error } = await supabase.from("articles").delete().eq("id", id);
     if (error) return errorResponse(`DB: ${error.message}`);
 
+    revalidatePath("/");
     revalidatePath("/archive");
     return okResponse();
   } catch (e) {
