@@ -6,12 +6,15 @@ export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ id: string }> };
 
-async function getCardSet(id: string): Promise<CardSet | null> {
+async function getCardSet(idOrSlug: string): Promise<CardSet | null> {
   try {
+    // UUID 형식이면 id로, 아니면 slug로 조회
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-/.test(idOrSlug);
+    const column = isUuid ? "id" : "slug";
     const { data } = await supabase
       .from("cardsets")
       .select("*")
-      .eq("id", id)
+      .eq(column, idOrSlug)
       .single();
     return data as CardSet | null;
   } catch {

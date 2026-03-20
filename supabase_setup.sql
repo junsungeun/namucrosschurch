@@ -3,6 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS cardsets (
   id            uuid primary key default gen_random_uuid(),
+  slug          text unique,
   date          text,
   title         text not null,
   series        text,

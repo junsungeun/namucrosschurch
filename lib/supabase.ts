@@ -33,6 +33,7 @@ export type CardTextData = {
 
 export type CardSet = {
   id: string;
+  slug?: string;
   date: string;
   title: string;
   series?: string;
@@ -45,6 +46,16 @@ export type CardSet = {
   card_urls: string[];
   created_at: string;
 };
+
+/** 6자리 짧은 슬러그 생성 */
+export function generateSlug(): string {
+  const chars = "abcdefghjkmnpqrstuvwxyz23456789";
+  let slug = "";
+  for (let i = 0; i < 6; i++) {
+    slug += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return slug;
+}
 
 export type Template = {
   id: string;

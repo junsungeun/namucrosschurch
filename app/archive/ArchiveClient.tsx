@@ -46,9 +46,10 @@ export default function ArchiveClient({ grouped }: Props) {
     a.click();
   }
 
-  function copyArticleLink(id: string) {
+  function copyArticleLink(cs: CardSet) {
     setOpenMenu(null);
-    navigator.clipboard.writeText(`${window.location.origin}/article/${id}`);
+    const key = cs.slug || cs.id;
+    navigator.clipboard.writeText(`${window.location.origin}/article/${key}`);
     toast("링크가 복사되었습니다!", "success");
   }
 
@@ -134,7 +135,7 @@ export default function ArchiveClient({ grouped }: Props) {
                         <div className="dropdown-menu">
                           {cs.youtube_url && <a href={cs.youtube_url} target="_blank" rel="noopener noreferrer" className="dropdown-item">설교보기</a>}
                           <button className="dropdown-item" onClick={() => redownload(cs)}>다운로드</button>
-                          <button className="dropdown-item" onClick={() => copyArticleLink(cs.id)}>아티클 링크</button>
+                          <button className="dropdown-item" onClick={() => copyArticleLink(cs)}>아티클 링크</button>
                           <button className="dropdown-item" onClick={() => startEdit(cs)}>수정</button>
                           <div className="dropdown-divider" />
                           <button className="dropdown-item dropdown-item--danger" onClick={() => requestDelete(cs)}>삭제</button>

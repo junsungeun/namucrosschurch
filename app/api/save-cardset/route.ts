@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { revalidatePath } from "next/cache";
 import { getServiceClient, errorResponse, okResponse } from "@/lib/api-utils";
+import { generateSlug } from "@/lib/supabase";
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,8 +34,10 @@ export async function POST(req: NextRequest) {
       cardUrls.push(urlData.publicUrl);
     }
 
+    const slug = generateSlug();
     const { error: insertError } = await supabase.from("cardsets").insert({
       ...meta,
+      slug,
       template_id: "template-a",
       card_urls: cardUrls,
     });
