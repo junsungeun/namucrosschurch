@@ -86,7 +86,10 @@ export default function DonePage() {
             title: coverCard.title ?? "",
             series: coverCard.series,
             scripture: coverCard.scripture,
-            summary: cards.find((c) => c.type === "body")?.content,
+            summary: cards
+              .filter((c) => c.type === "body")
+              .map((c) => [c.subtitle, c.content].filter(Boolean).join("\n"))
+              .join("\n\n"),
             youtube_url: youtubeUrl || null,
             format,
           },

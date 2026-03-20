@@ -80,7 +80,7 @@ export default async function ArticlePage({ params }: Props) {
 
         {/* 본문 */}
         {cs.summary && (
-          <p style={{
+          <div style={{
             fontFamily: '"Suit", sans-serif',
             fontSize: 17,
             color: "#333",
@@ -88,8 +88,13 @@ export default async function ArticlePage({ params }: Props) {
             marginBottom: 40,
             wordBreak: "keep-all",
           }}>
-            {cs.summary}
-          </p>
+            {cs.summary.split("\n").map((line, i) => (
+              <span key={i}>
+                {line}
+                {i < cs.summary!.split("\n").length - 1 && <br />}
+              </span>
+            ))}
+          </div>
         )}
 
         {/* 영상 버튼 */}
