@@ -84,8 +84,8 @@ export default function HomeClient({ cardsets, articles }: Props) {
     }
     const content = await zip.generateAsync({ type: "blob" });
     const url = URL.createObjectURL(content);
-    const a = document.createElement("a");
-    a.href = url; a.download = `나무카드_${cs.date}.zip`; a.click();
+    const a = document.createElement("a"); a.href = url;
+    a.download = `나무카드_${cs.date}.zip`; a.click();
   }
 
   function copyCardLink(cs: CardSet) {
@@ -95,6 +95,7 @@ export default function HomeClient({ cardsets, articles }: Props) {
   }
 
   function copyArticleLink(article: Article) {
+    setOpenMenu(null);
     navigator.clipboard.writeText(`${window.location.origin}/articles/${article.slug || article.id}`);
     toast("링크가 복사되었습니다!", "success");
   }
@@ -129,96 +130,6 @@ export default function HomeClient({ cardsets, articles }: Props) {
     <>
       {showOpening && <OpeningOverlay onDone={() => setShowOpening(false)} />}
 
-      <style>{`
-        .hc-wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px 80px; }
-
-        /* 카드 그리드 */
-        .hc-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 40px 20px;
-        }
-        @media (max-width: 860px) {
-          .hc-grid { grid-template-columns: repeat(2, 1fr); gap: 28px 14px; }
-        }
-        @media (max-width: 480px) {
-          .hc-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 10px; }
-          .hc-wrap { padding: 0 16px 60px; }
-        }
-
-        /* 카드 아이템 */
-        .hc-card {
-          position: relative;
-        }
-        .hc-card-img {
-          width: 100%;
-          padding-top: 125%; /* 4:5 비율 */
-          position: relative;
-          border-radius: 10px;
-          overflow: hidden;
-          background: #2D5A3D;
-        }
-        .hc-card-img img {
-          position: absolute !important;
-          inset: 0;
-          width: 100% !important;
-          height: 100% !important;
-          object-fit: cover;
-        }
-        .hc-card-date {
-          font-size: 11px; color: #aaa;
-          margin: 10px 0 3px; letter-spacing: 0.02em;
-        }
-        .hc-card-title {
-          font-size: 14px; font-weight: 700; color: #111;
-          line-height: 1.4; word-break: keep-all;
-        }
-        .hc-card-actions {
-          display: flex; gap: 6px; margin-top: 8px;
-        }
-        .hc-act-btn {
-          flex: 1; padding: 6px 0; font-size: 11px; font-weight: 500;
-          color: #666; background: #f7f7f5; border: none;
-          border-radius: 5px; cursor: pointer; text-align: center;
-          transition: background 0.15s;
-        }
-        .hc-act-btn:hover { background: #eee; }
-        .hc-act-btn--danger { color: #e05252; background: #fff3f3; }
-        .hc-act-btn--danger:hover { background: #ffe0e0; }
-
-        /* 아티클 리스트 */
-        .hc-art-row {
-          display: flex; align-items: center;
-          padding: 20px 0; border-bottom: 1px solid #f0f0f0;
-        }
-        .hc-art-link {
-          flex: 1; min-width: 0; text-decoration: none; transition: opacity 0.15s;
-        }
-        .hc-art-link:hover { opacity: 0.65; }
-        .hc-art-date {
-          font-size: 11px; font-weight: 600; color: #3D6B4F;
-          letter-spacing: 0.05em; margin-bottom: 6px; text-transform: uppercase;
-        }
-        .hc-art-title {
-          font-size: 18px; font-weight: 700; color: #111;
-          line-height: 1.35; word-break: keep-all; letter-spacing: -0.02em;
-        }
-        .hc-art-scripture { font-size: 13px; color: #bbb; margin-top: 5px; }
-
-        @media (max-width: 640px) {
-          .hc-art-title { font-size: 15px; }
-          .hc-art-row { padding: 16px 0; }
-        }
-
-        /* 탭 */
-        .hc-tab {
-          background: none; border: none; cursor: pointer;
-          padding: 12px 0; margin-right: 28px;
-          font-size: 14px; transition: all 0.15s;
-          border-bottom: 2px solid transparent; margin-bottom: -1px;
-        }
-      `}</style>
-
       <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "var(--f-body)" }}>
 
         {/* 헤더 */}
@@ -245,14 +156,19 @@ export default function HomeClient({ cardsets, articles }: Props) {
           }}>카드뉴스 생성</Link>
         </header>
 
-        <div className="hc-wrap">
+        {/* 콘텐츠 */}
+        <div style={{ maxWidth: 760, margin: "0 auto", padding: "0 24px 80px" }}>
+
           {/* 탭 */}
-          <div style={{ display: "flex", borderBottom: "1px solid #eee", marginBottom: 32, marginTop: 32 }}>
+          <div style={{ display: "flex", borderBottom: "1px solid #eee", marginTop: 32, marginBottom: 8 }}>
             {(["cards", "articles"] as const).map((t) => (
-              <button key={t} onClick={() => setTab(t)} className="hc-tab" style={{
+              <button key={t} onClick={() => setTab(t)} style={{
+                background: "none", border: "none", cursor: "pointer",
+                padding: "12px 0", marginRight: 28, fontSize: 14,
                 fontWeight: tab === t ? 700 : 400,
                 color: tab === t ? "#111" : "#bbb",
-                borderBottomColor: tab === t ? "#111" : "transparent",
+                borderBottom: tab === t ? "2px solid #111" : "2px solid transparent",
+                marginBottom: -1, transition: "all 0.15s",
               }}>
                 {t === "cards" ? "카드뉴스" : "아티클"}
                 <span style={{ marginLeft: 5, fontSize: 12, opacity: 0.5, fontWeight: 400 }}>
@@ -262,7 +178,7 @@ export default function HomeClient({ cardsets, articles }: Props) {
             ))}
           </div>
 
-          {/* ── 카드 그리드 ── */}
+          {/* ── 카드뉴스 목록 ── */}
           {tab === "cards" && (
             cardsets.length === 0 ? (
               <div style={{ textAlign: "center", padding: "80px 0" }}>
@@ -273,42 +189,66 @@ export default function HomeClient({ cardsets, articles }: Props) {
                 }}>첫 카드 만들기</Link>
               </div>
             ) : (
-              <div className="hc-grid">
+              <div style={{ display: "flex", flexDirection: "column" }}>
                 {cardsets.map((cs) => (
-                  <div key={cs.id} className="hc-card" style={{
+                  <div key={cs.id} style={{
+                    display: "flex", alignItems: "center", gap: 16,
+                    padding: "16px 0", borderBottom: "1px solid #f3f3f3",
                     opacity: deletingCard === cs.id ? 0.4 : 1, transition: "opacity 0.2s",
+                    position: "relative",
                   }}>
                     {/* 썸네일 */}
-                    <div className="hc-card-img">
+                    <div style={{
+                      width: 60, height: 60, borderRadius: 8, overflow: "hidden",
+                      background: "#2D5A3D", flexShrink: 0, position: "relative",
+                    }}>
                       {cs.card_urls?.[0] && (
                         <Image
                           src={cs.card_urls[0]} alt={cs.title} fill
-                          sizes="(max-width: 480px) 50vw, (max-width: 860px) 50vw, 33vw"
-                          style={{ objectFit: "cover" }}
+                          sizes="60px" style={{ objectFit: "cover" }}
                         />
                       )}
                     </div>
 
-                    {/* 메타 */}
-                    <div className="hc-card-date">
-                      {cs.date}{cs.series && ` · ${cs.series}`}
+                    {/* 텍스트 */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontFamily: "var(--f-head)", fontSize: 15, fontWeight: 700,
+                        color: "#111", marginBottom: 4,
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      }}>{cs.title}</div>
+                      <div style={{ fontSize: 12, color: "#aaa" }}>
+                        {cs.date}{cs.series && ` · ${cs.series}`}
+                        {cs.scripture && ` · ${cs.scripture}`}
+                      </div>
                     </div>
-                    <div className="hc-card-title">{cs.title}</div>
 
-                    {/* 액션 버튼 */}
-                    <div className="hc-card-actions">
-                      {cs.youtube_url && (
-                        <a
-                          href={cs.youtube_url} target="_blank" rel="noopener noreferrer"
-                          className="hc-act-btn" style={{ textDecoration: "none" }}
-                        >설교</a>
-                      )}
-                      <button className="hc-act-btn" onClick={() => copyCardLink(cs)}>링크</button>
-                      <button className="hc-act-btn" onClick={() => downloadCard(cs)}>다운</button>
+                    {/* 드롭다운 */}
+                    <div className="dropdown" ref={openMenu === cs.id ? menuRef : undefined}>
                       <button
-                        className="hc-act-btn hc-act-btn--danger"
-                        onClick={() => setDeleteCardTarget(cs)}
-                      >삭제</button>
+                        className="dropdown-trigger"
+                        onClick={() => setOpenMenu(openMenu === cs.id ? null : cs.id)}
+                      >⋯</button>
+                      {openMenu === cs.id && (
+                        <div className="dropdown-menu">
+                          {cs.youtube_url && (
+                            <a href={cs.youtube_url} target="_blank" rel="noopener noreferrer" className="dropdown-item">
+                              설교 영상 보기
+                            </a>
+                          )}
+                          <button className="dropdown-item" onClick={() => copyCardLink(cs)}>
+                            아티클 링크 복사
+                          </button>
+                          <button className="dropdown-item" onClick={() => downloadCard(cs)}>
+                            카드 다운로드
+                          </button>
+                          <div className="dropdown-divider" />
+                          <button
+                            className="dropdown-item dropdown-item--danger"
+                            onClick={() => { setOpenMenu(null); setDeleteCardTarget(cs); }}
+                          >삭제</button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -316,7 +256,7 @@ export default function HomeClient({ cardsets, articles }: Props) {
             )
           )}
 
-          {/* ── 아티클 리스트 ── */}
+          {/* ── 아티클 목록 ── */}
           {tab === "articles" && (
             articles.length === 0 ? (
               <div style={{ textAlign: "center", padding: "80px 0" }}>
@@ -327,36 +267,46 @@ export default function HomeClient({ cardsets, articles }: Props) {
                 }}>아티클 작성</Link>
               </div>
             ) : (
-              <div>
+              <div style={{ display: "flex", flexDirection: "column" }}>
                 {articles.map((article) => (
-                  <div key={article.id} className="hc-art-row" style={{
+                  <div key={article.id} style={{
+                    display: "flex", alignItems: "center", gap: 16,
+                    padding: "16px 0", borderBottom: "1px solid #f3f3f3",
                     opacity: deletingArticle === article.id ? 0.4 : 1, transition: "opacity 0.2s",
+                    position: "relative",
                   }}>
-                    <Link href={`/articles/${article.slug || article.id}`} className="hc-art-link">
-                      <div className="hc-art-date">
-                        {article.date}{article.series && ` · ${article.series}`}
+                    {/* 텍스트 */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{
+                        fontFamily: "var(--f-head)", fontSize: 15, fontWeight: 700,
+                        color: "#111", marginBottom: 4,
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      }}>{article.title}</div>
+                      <div style={{ fontSize: 12, color: "#aaa" }}>
+                        {article.date}
+                        {article.series && ` · ${article.series}`}
+                        {article.scripture && ` · ${article.scripture}`}
                       </div>
-                      <div className="hc-art-title">{article.title}</div>
-                      {article.scripture && (
-                        <div className="hc-art-scripture">{article.scripture}</div>
+                    </div>
+
+                    {/* 드롭다운 */}
+                    <div className="dropdown" ref={openMenu === article.id ? menuRef : undefined}>
+                      <button
+                        className="dropdown-trigger"
+                        onClick={() => setOpenMenu(openMenu === article.id ? null : article.id)}
+                      >⋯</button>
+                      {openMenu === article.id && (
+                        <div className="dropdown-menu">
+                          <button className="dropdown-item" onClick={() => copyArticleLink(article)}>
+                            아티클 링크 복사
+                          </button>
+                          <div className="dropdown-divider" />
+                          <button
+                            className="dropdown-item dropdown-item--danger"
+                            onClick={() => { setOpenMenu(null); setDeleteArticleTarget(article); }}
+                          >삭제</button>
+                        </div>
                       )}
-                    </Link>
-                    <div style={{ display: "flex", gap: 6, paddingLeft: 16, flexShrink: 0 }}>
-                      <button
-                        onClick={() => copyArticleLink(article)}
-                        style={{
-                          background: "none", border: "1px solid #e8e8e8",
-                          borderRadius: 6, padding: "5px 10px", fontSize: 11,
-                          cursor: "pointer", color: "#aaa",
-                        }}
-                      >링크</button>
-                      <button
-                        onClick={() => setDeleteArticleTarget(article)}
-                        style={{
-                          background: "none", border: "none",
-                          fontSize: 11, cursor: "pointer", color: "#e05252", padding: "5px 6px",
-                        }}
-                      >삭제</button>
                     </div>
                   </div>
                 ))}
