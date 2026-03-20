@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
     if (error) return errorResponse(error.message);
 
     revalidatePath("/archive");
+    revalidatePath(`/article/${id}`);
     return okResponse();
   } catch (e) {
     return errorResponse(String(e));
