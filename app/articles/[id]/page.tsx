@@ -279,7 +279,7 @@ export default async function ArticleViewPage({ params }: Props) {
           {/* 추천 콘텐츠 — 매거진 리스트 */}
           <div className="a-nav-section">
             <div className="a-nav-head">
-              <span className="a-nav-head-label">추천 콘텐츠</span>
+              <span className="a-nav-head-label">추천 아티클</span>
               <Link href="/archive?tab=articles" className="a-nav-head-more">전체보기 &rsaquo;</Link>
             </div>
 
@@ -296,14 +296,6 @@ export default async function ArticleViewPage({ params }: Props) {
                 <div className="a-nav-item-body">
                   <div className="a-nav-item-title">{next.title}</div>
                   {next.date && <div className="a-nav-item-date">{next.date}</div>}
-                </div>
-              </Link>
-            )}
-            {!prev && !next && (
-              <Link href="/archive" className="a-nav-item">
-                <div className="a-nav-item-body">
-                  <div className="a-nav-item-title">아티클 전체 보기</div>
-                  <div className="a-nav-item-date">보관함으로 이동</div>
                 </div>
               </Link>
             )}
