@@ -20,16 +20,19 @@ export default function InstaMockup({ card, templateColor, templateIsLight, form
   return <FeedMockup card={card} templateColor={templateColor} templateIsLight={templateIsLight} cardIndex={cardIndex} totalCards={totalCards} seriesName={seriesName} />;
 }
 
-/* ── 피드 목업 (1:1) ── */
+/* ── 피드 목업 (4:5) ── */
 function FeedMockup({ card, templateColor, templateIsLight, cardIndex, totalCards, seriesName }: Omit<Props, "format">) {
+  // 1080×1350 카드를 375px 너비로 → scale = 375/1080 ≈ 0.347, 높이 = 1350×0.347 ≈ 469
+  const scale = 375 / 1080;
+  const displayH = Math.round(1350 * scale); // 469
   return (
     <div style={{ background: "#fff", border: "1px solid #dbdbdb", borderRadius: 4, width: 375, fontFamily: "-apple-system, sans-serif", overflow: "hidden" }}>
       {/* 프로필 헤더 */}
       <ProfileHeader />
 
-      {/* 카드 (375x375) — 1080px 카드를 375/1080 = 0.347 스케일 */}
-      <div style={{ width: 375, height: 375, overflow: "hidden", position: "relative" }}>
-        <div style={{ transform: "scale(0.347)", transformOrigin: "top left", width: 1080, height: 1080, position: "absolute", top: 0, left: 0 }}>
+      {/* 카드 (375×469) — 4:5 */}
+      <div style={{ width: 375, height: displayH, overflow: "hidden", position: "relative" }}>
+        <div style={{ transform: `scale(${scale})`, transformOrigin: "top left", width: 1080, height: 1350, position: "absolute", top: 0, left: 0 }}>
           <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format="feed" cardIndex={cardIndex} totalCards={totalCards} seriesName={seriesName} />
         </div>
       </div>

@@ -19,7 +19,7 @@ const F_HEAD  = '"GMarketSans", sans-serif';
 
 // 실제 출력 해상도
 export const CARD_W = 1080;
-export const CARD_H_FEED  = 1080;
+export const CARD_H_FEED  = 1350;  // 4:5 (인스타그램 2025 표준)
 export const CARD_H_STORY = 1920;
 
 type Props = {
@@ -131,19 +131,20 @@ function BodyCard({ card, cardIndex, totalCards, series }: {
             {card.subtitle}
           </div>
         )}
-        <div style={{
-          fontFamily: F_BODY,
-          fontWeight: 400,
-          fontSize: 28,
-          color: "#444444",
-          lineHeight: 1.9,
-          wordBreak: "break-word",
-          overflowWrap: "break-word",
-          overflow: "hidden",
-          whiteSpace: "pre-wrap",
-        }}>
-          {card.content || "본문 내용을 입력하세요"}
-        </div>
+        <div
+          className="card-html-body"
+          dangerouslySetInnerHTML={{ __html: card.content || '<span style="opacity:0.35">본문 내용을 입력하세요</span>' }}
+          style={{
+            fontFamily: F_BODY,
+            fontWeight: 400,
+            fontSize: 28,
+            color: "#444444",
+            lineHeight: 1.9,
+            wordBreak: "break-word",
+            overflowWrap: "break-word",
+            overflow: "hidden",
+          }}
+        />
       </div>
 
       {/* 하단 브랜드바 */}

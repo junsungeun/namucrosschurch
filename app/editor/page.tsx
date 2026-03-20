@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useEditorStore, CardData } from "@/lib/store";
 import CardPreview from "@/components/CardPreview";
 import PageHeader from "@/components/PageHeader";
@@ -92,7 +92,7 @@ export default function EditorPage() {
           {card.type === "cover" ? (
             <CoverFields card={card} update={(d) => updateCard(card.id, d)} />
           ) : (
-            <BodyFields card={card} format={format} update={(d) => updateCard(card.id, d)} />
+            <BodyFields key={card.id} card={card} format={format} update={(d) => updateCard(card.id, d)} />
           )}
 
           {/* 유튜브 링크 */}
@@ -159,18 +159,117 @@ function CoverFields({ card, update }: { card: CardData; update: (d: Partial<Car
 }
 
 function BodyFields({ card, format, update }: { card: CardData; format: "feed" | "story"; update: (d: Partial<CardData>) => void }) {
-  const maxChars = format === "story" ? 700 : 478;
+  const maxChars = format === "story" ? 700 : 500;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       <Field label="소제목" placeholder="이 카드의 핵심 포인트" value={card.subtitle ?? ""} onChange={(v) => update({ subtitle: v })} />
-      <TextareaField
+      <RichTextEditor
         label="본문 내용"
-        placeholder="말씀 요약 또는 핵심 내용을 입력하세요"
         value={card.content ?? ""}
         onChange={(v) => update({ content: v })}
         maxChars={maxChars}
         required
       />
+    </div>
+  );
+}
+
+function RichTextEditor({ label, value, onChange, maxChars, required }: {
+  label: string; value: string; onChange: (v: string) => void; maxChars?: number; required?: boolean;
+}) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [textLen, setTextLen] = useState(0);
+
+  // 마운트 시 초기값 세팅
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.innerHTML = value || "";
+      setTextLen(editorRef.current.innerText.replace(/\n$/, "").length);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleInput = useCallback(() => {
+    const html = editorRef.current?.innerHTML ?? "";
+    const len = editorRef.current?.innerText.replace(/\n$/, "").length ?? 0;
+    setTextLen(len);
+    onChange(html);
+  }, [onChange]);
+
+  function exec(cmd: string) {
+    editorRef.current?.focus();
+    document.execCommand(cmd, false, undefined);
+    handleInput();
+  }
+
+  function toggleMark() {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
+    editorRef.current?.focus();
+    try {
+      const range = sel.getRangeAt(0);
+      let node: Node | null = range.commonAncestorContainer;
+      if (node.nodeType === 3) node = node.parentElement;
+      const existingMark = (node as Element)?.closest?.("mark");
+      if (existingMark) {
+        const parent = existingMark.parentNode!;
+        while (existingMark.firstChild) parent.insertBefore(existingMark.firstChild, existingMark);
+        parent.removeChild(existingMark);
+      } else {
+        const mark = document.createElement("mark");
+        range.surroundContents(mark);
+      }
+      handleInput();
+    } catch {
+      // 여러 요소 걸친 선택 — skip
+    }
+  }
+
+  const remaining = maxChars ? maxChars - textLen : null;
+  const isWarn = remaining !== null && remaining <= 30;
+  const isOver = remaining !== null && remaining < 0;
+
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
+        <label className="label-sm" style={{ marginBottom: 0 }}>
+          {label}{required && <span className="required-mark"> *</span>}
+        </label>
+        {maxChars && (
+          <span style={{ fontSize: 11, color: isOver ? "#e05252" : isWarn ? "#C4873A" : "#BBBBBB" }}>
+            {textLen} / {maxChars}
+          </span>
+        )}
+      </div>
+
+      {/* 툴바 */}
+      <div className="rte-toolbar">
+        <button type="button" className="rte-btn" onMouseDown={(e) => { e.preventDefault(); exec("bold"); }} title="굵게 (Ctrl+B)">
+          <strong>B</strong>
+        </button>
+        <button type="button" className="rte-btn" onMouseDown={(e) => { e.preventDefault(); exec("italic"); }} title="기울임 (Ctrl+I)">
+          <em style={{ fontStyle: "italic" }}>I</em>
+        </button>
+        <button type="button" className="rte-btn rte-btn--mark" onMouseDown={(e) => { e.preventDefault(); toggleMark(); }} title="마커 하이라이트">
+          <span className="rte-mark-preview">A</span>
+        </button>
+      </div>
+
+      {/* 에디터 */}
+      <div
+        ref={editorRef}
+        className={`input rte-editor${isOver ? " rte-editor--error" : ""}`}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={handleInput}
+        data-placeholder="말씀 요약 또는 핵심 내용을 입력하세요"
+      />
+
+      {isOver && (
+        <p className="error-text" style={{ marginTop: 4 }}>
+          카드에서 내용이 잘릴 수 있습니다 ({Math.abs(remaining!)}자 초과)
+        </p>
+      )}
     </div>
   );
 }
@@ -184,6 +283,7 @@ function Field({ label, placeholder, value, onChange, required }: { label: strin
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function TextareaField({ label, placeholder, value, onChange, maxChars, required }: { label: string; placeholder: string; value: string; onChange: (v: string) => void; maxChars?: number; required?: boolean }) {
   const len = value.length;
   const remaining = maxChars ? maxChars - len : null;
@@ -232,13 +332,13 @@ function EditorPreviewCard({ card, format, templateColor, templateIsLight, cardI
     return () => obs.disconnect();
   }, []);
 
-  const cardH = format === "story" ? 1920 : 1080;
+  const cardH = format === "story" ? 1920 : 1350;
 
   return (
     <div
       ref={ref}
       className="editor-preview-card"
-      style={{ aspectRatio: format === "story" ? "9/16" : "1/1" }}
+      style={{ aspectRatio: format === "story" ? "9/16" : "4/5" }}
     >
       <div style={{ position: "absolute", top: 0, left: 0, transform: `scale(${scale})`, transformOrigin: "top left", width: 1080, height: cardH }}>
         <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format={format} cardIndex={cardIndex} totalCards={totalCards} seriesName={seriesName} />

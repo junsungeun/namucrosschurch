@@ -117,7 +117,7 @@ export default function DonePage() {
         <div className="done-header">
           <div>
             <h1 className="heading-lg">카드 생성 완료</h1>
-            <p className="sub-text">총 {cards.length}장 · {format === "feed" ? "피드 1:1" : "스토리 9:16"}</p>
+            <p className="sub-text">총 {cards.length}장 · {format === "feed" ? "피드 4:5" : "스토리 9:16"}</p>
           </div>
           <div className="done-actions">
             <div className="done-btns">
@@ -229,10 +229,10 @@ function CardThumbnail({ card, format, templateColor, templateIsLight, cardIndex
     return () => obs.disconnect();
   }, []);
 
-  const cardH = format === "story" ? 1920 : 1080;
+  const cardH = format === "story" ? 1920 : 1350;
 
   return (
-    <div ref={ref} className="thumb-wrapper" style={{ aspectRatio: format === "story" ? "9/16" : "1/1" }}>
+    <div ref={ref} className="thumb-wrapper" style={{ aspectRatio: format === "story" ? "9/16" : "4/5" }}>
       <div style={{ position: "absolute", top: 0, left: 0, transform: `scale(${scale})`, transformOrigin: "top left", width: 1080, height: cardH }}>
         <CardPreview card={card} templateColor={templateColor} templateIsLight={templateIsLight} format={format} cardIndex={cardIndex} totalCards={totalCards} seriesName={seriesName} />
       </div>

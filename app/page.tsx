@@ -48,7 +48,7 @@ export default function HomePage() {
                 fontSize: 14,
               }}
             >
-              {f === "feed" ? "피드 1:1" : "스토리 9:16"}
+              {f === "feed" ? "피드 4:5" : "스토리 9:16"}
             </button>
           ))}
         </div>
@@ -88,7 +88,7 @@ export default function HomePage() {
               <div className="label-sm" style={{ marginBottom: 14, letterSpacing: "0.05em" }}>미리보기</div>
               <div style={{
                 width: "100%",
-                aspectRatio: format === "story" ? "9/16" : "1/1",
+                aspectRatio: format === "story" ? "9/16" : "4/5",
                 borderRadius: 12,
                 background: selected?.bgColor ?? "#2D5A3D",
                 display: "flex",
