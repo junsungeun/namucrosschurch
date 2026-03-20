@@ -162,8 +162,8 @@ export default function ArchiveClient({ grouped }: Props) {
                         <input className="input" value={editForm.scripture ?? ""} onChange={e => setEditForm(f => ({ ...f, scripture: e.target.value }))} />
                       </div>
                       <div className="inline-form--full">
-                        <label className="label-sm">요약</label>
-                        <input className="input" value={editForm.summary ?? ""} onChange={e => setEditForm(f => ({ ...f, summary: e.target.value }))} />
+                        <label className="label-sm">본문 내용</label>
+                        <textarea className="input" rows={10} style={{ resize: "vertical", whiteSpace: "pre-wrap" }} value={editForm.summary ?? ""} onChange={e => setEditForm(f => ({ ...f, summary: e.target.value }))} />
                       </div>
                       <div className="inline-form--full">
                         <label className="label-sm">유튜브 URL</label>
