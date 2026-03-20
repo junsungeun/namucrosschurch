@@ -81,7 +81,7 @@ export default function AdminClient({ initialTemplates }: Props) {
               <div style={{ width: 40, height: 40, borderRadius: 8, background: t.bg_color ?? "#2D5A3D", flexShrink: 0 }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: "var(--f-head)", fontSize: 14, fontWeight: 700, color: "var(--text)" }}>{t.name}</div>
-                <div className="sub-text" style={{ fontSize: 12 }}>{t.format === "feed" ? "피드 1:1" : "스토리 9:16"}</div>
+                <div className="sub-text" style={{ fontSize: 12 }}>{t.format === "feed" ? "피드 4:5" : "스토리 9:16"}</div>
               </div>
               <span className={`badge ${t.active ? "badge-primary" : ""}`} style={!t.active ? { background: "#f0f0f0", color: "#999" } : {}}>
                 {t.active ? "활성" : "비활성"}

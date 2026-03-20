@@ -179,10 +179,10 @@ function BodyFields({ card, format, update }: { card: CardData; format: "feed" |
 
 // 글자 하단에 두꺼운 컬러 블록 깔리는 디자인 마크
 const DESIGN_MARKS = [
-  { key: "green",  label: "초록", solid: "#3D6B4F", rgba: "rgba(61,107,79,0.42)"    },
-  { key: "amber",  label: "황토", solid: "#C4873A", rgba: "rgba(196,135,58,0.45)"   },
-  { key: "blue",   label: "하늘", solid: "#5EA0DC", rgba: "rgba(94,160,220,0.45)"   },
-  { key: "pink",   label: "분홍", solid: "#D26478", rgba: "rgba(210,100,120,0.42)"  },
+  { key: "green",  label: "초록", solid: "#3D6B4F", rgba: "rgba(61,107,79,0.25)"    },
+  { key: "amber",  label: "황토", solid: "#C4873A", rgba: "rgba(196,135,58,0.28)"   },
+  { key: "blue",   label: "하늘", solid: "#5EA0DC", rgba: "rgba(94,160,220,0.28)"   },
+  { key: "pink",   label: "분홍", solid: "#D26478", rgba: "rgba(210,100,120,0.25)"  },
 ];
 
 // TipTap 커스텀 마크 — gradient 하단 블록
@@ -345,38 +345,6 @@ function Field({ label, placeholder, value, onChange, required }: { label: strin
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function TextareaField({ label, placeholder, value, onChange, maxChars, required }: { label: string; placeholder: string; value: string; onChange: (v: string) => void; maxChars?: number; required?: boolean }) {
-  const len = value.length;
-  const remaining = maxChars ? maxChars - len : null;
-  const isWarn = remaining !== null && remaining <= 30;
-  const isOver = remaining !== null && remaining < 0;
-  return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 6 }}>
-        <label className="label-sm" style={{ marginBottom: 0 }}>{label}{required && <span className="required-mark"> *</span>}</label>
-        {maxChars && (
-          <span style={{ fontSize: 11, color: isOver ? "#e05252" : isWarn ? "#C4873A" : "#BBBBBB" }}>
-            {len} / {maxChars}
-          </span>
-        )}
-      </div>
-      <textarea
-        className="input"
-        placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        rows={7}
-        style={{ resize: "vertical", borderColor: isOver ? "#e05252" : undefined }}
-      />
-      {isOver && (
-        <p className="error-text" style={{ marginTop: 4 }}>
-          카드에서 내용이 잘릴 수 있습니다 ({Math.abs(remaining!)}자 초과)
-        </p>
-      )}
-    </div>
-  );
-}
 
 function EditorPreviewCard({ card, format, templateColor, templateIsLight, cardIndex, totalCards, seriesName }: {
   card: CardData; format: "feed" | "story"; templateColor: string; templateIsLight: boolean;

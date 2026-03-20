@@ -278,11 +278,6 @@ textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
 }
 .rte-btn:hover { background: rgba(0,0,0,0.07); }
 .rte-btn--mark { font-size: 13px; }
-.rte-mark-preview {
-  background-image: linear-gradient(transparent 50%, rgba(196, 135, 58, 0.45) 50%);
-  padding: 0 1px;
-  font-weight: 600;
-}
 /* TipTap EditorContent 래퍼 */
 .rte-editor-wrap .ProseMirror,
 .ProseMirror {
