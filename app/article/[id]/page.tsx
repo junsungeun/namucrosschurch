@@ -78,7 +78,21 @@ export default async function ArticlePage({ params }: Props) {
         {/* 구분선 */}
         <div style={{ width: 40, height: 2, background: "#3D6B4F", marginBottom: 32 }} />
 
-        {/* 본문 */}
+        {/* 말씀 카드 이미지 */}
+        {cs.card_urls?.length > 0 && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 40 }}>
+            {cs.card_urls.map((url, i) => (
+              <img
+                key={i}
+                src={url}
+                alt={`${cs.title} 카드 ${i + 1}`}
+                style={{ width: "100%", height: "auto", borderRadius: 8 }}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* 본문 텍스트 */}
         {cs.summary && (
           <div style={{
             fontFamily: '"Suit", sans-serif',
