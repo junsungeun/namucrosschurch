@@ -23,43 +23,46 @@ export default function ScrollProgress() {
     <>
       <style>{`
         /* 모바일: 상단 가로 바 */
-        .sp-bar {
+        .sp-mobile {
           position: fixed;
           top: 0;
           left: 0;
+          right: 0;
           height: 3px;
-          background: #3D6B4F;
+          background: #e8e8e8;
           z-index: 50;
-          transition: width 0.1s linear;
         }
 
-        /* 데스크톱: 오른쪽 네모 박스 */
-        .sp-box {
+        .sp-mobile-fill {
+          height: 100%;
+          background: #3D6B4F;
+          transition: width 0.15s linear;
+        }
+
+        /* 데스크톱: 오른쪽 세로 네모 박스 */
+        .sp-side {
           display: none;
         }
 
         @media (min-width: 769px) {
-          .sp-bar {
+          .sp-mobile {
             display: none;
           }
 
-          .sp-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
+          .sp-side {
+            display: block;
             position: fixed;
-            right: calc((100vw - 640px) / 2 - 80px);
+            right: calc((100vw - 640px) / 2 - 56px);
             top: 50%;
             transform: translateY(-50%);
             z-index: 50;
           }
 
           .sp-track {
-            width: 4px;
-            height: 120px;
-            background: #eee;
-            border-radius: 2px;
+            width: 8px;
+            height: 140px;
+            background: #e8e8e8;
+            border-radius: 4px;
             overflow: hidden;
             position: relative;
           }
@@ -70,31 +73,25 @@ export default function ScrollProgress() {
             left: 0;
             width: 100%;
             background: #3D6B4F;
-            border-radius: 2px;
-            transition: height 0.1s linear;
-          }
-
-          .sp-pct {
-            font-family: 'Pretendard Variable', 'Pretendard', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            color: #3D6B4F;
+            border-radius: 4px;
+            transition: height 0.15s linear;
           }
         }
 
-        @media (min-width: 769px) and (max-width: 900px) {
-          .sp-box {
-            right: 16px;
+        @media (min-width: 769px) and (max-width: 880px) {
+          .sp-side {
+            right: 12px;
           }
         }
       `}</style>
 
-      {/* 모바일 상단 바 */}
-      <div className="sp-bar" style={{ width: `${progress}%` }} />
+      {/* 모바일: 상단 가로 바 */}
+      <div className="sp-mobile">
+        <div className="sp-mobile-fill" style={{ width: `${progress}%` }} />
+      </div>
 
-      {/* 데스크톱 오른쪽 박스 */}
-      <div className="sp-box">
-        <div className="sp-pct">{progress}%</div>
+      {/* 데스크톱: 오른쪽 세로 박스 */}
+      <div className="sp-side">
         <div className="sp-track">
           <div className="sp-fill" style={{ height: `${progress}%` }} />
         </div>
