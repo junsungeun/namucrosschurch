@@ -72,8 +72,7 @@ export default async function ArticlePage({ params }: Props) {
         alignItems: "center",
         justifyContent: "center",
         fontFamily: '"Pretendard", "Suit", -apple-system, sans-serif',
-        color: "#666",
-        background: "#111",
+        color: "#999",
       }}>
         말씀 카드를 찾을 수 없습니다
       </div>
@@ -94,9 +93,9 @@ export default async function ArticlePage({ params }: Props) {
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         .a-page {
-          background: #111;
+          background: #FAFAF8;
           min-height: 100vh;
-          color: #E5E5E5;
+          color: #1A1A1A;
           font-family: 'Pretendard Variable', 'Pretendard', -apple-system, 'Suit', sans-serif;
           -webkit-font-smoothing: antialiased;
         }
@@ -108,32 +107,34 @@ export default async function ArticlePage({ params }: Props) {
           left: 0;
           right: 0;
           z-index: 10;
-          padding: 20px 24px;
+          padding: 16px 24px;
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: linear-gradient(to bottom, rgba(17,17,17,0.95) 60%, transparent);
+          background: rgba(250,250,248,0.92);
+          backdrop-filter: blur(12px);
+          border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .a-nav-brand {
-          font-size: 14px;
+          font-size: 15px;
           font-weight: 700;
-          color: #fff;
+          color: #3D6B4F;
           letter-spacing: -0.02em;
         }
 
         .a-nav-link {
-          font-size: 12px;
-          color: rgba(255,255,255,0.5);
+          font-size: 13px;
+          color: #999;
           text-decoration: none;
           font-weight: 500;
         }
 
-        .a-nav-link:hover { color: rgba(255,255,255,0.8); }
+        .a-nav-link:hover { color: #666; }
 
         /* 히어로 */
         .a-hero {
-          padding: 100px 24px 48px;
+          padding: 100px 24px 0;
           max-width: 680px;
           margin: 0 auto;
         }
@@ -143,17 +144,14 @@ export default async function ArticlePage({ params }: Props) {
           font-size: 12px;
           font-weight: 600;
           color: #3D6B4F;
-          letter-spacing: 0.06em;
+          letter-spacing: 0.04em;
           margin-bottom: 20px;
-          padding: 6px 12px;
-          background: rgba(61, 107, 79, 0.12);
-          border-radius: 4px;
         }
 
         .a-title {
-          font-size: clamp(26px, 5vw, 36px);
+          font-size: clamp(28px, 5vw, 38px);
           font-weight: 800;
-          color: #fff;
+          color: #1A1A1A;
           line-height: 1.35;
           letter-spacing: -0.03em;
           margin-bottom: 20px;
@@ -163,32 +161,46 @@ export default async function ArticlePage({ params }: Props) {
         .a-meta {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: 10px;
           font-size: 14px;
-          color: rgba(255,255,255,0.4);
+          color: #999;
           font-weight: 400;
+          padding-bottom: 32px;
         }
 
         .a-meta-sep {
           width: 1px;
           height: 12px;
-          background: rgba(255,255,255,0.15);
+          background: #ddd;
+        }
+
+        /* 커버 이미지 */
+        .a-cover {
+          max-width: 680px;
+          margin: 0 auto;
+          padding: 0 24px 40px;
+        }
+
+        .a-cover img {
+          width: 100%;
+          height: auto;
+          border-radius: 12px;
         }
 
         /* 성경구절 */
         .a-quote {
           max-width: 680px;
           margin: 0 auto;
-          padding: 0 24px 40px;
+          padding: 0 24px 36px;
         }
 
         .a-quote-inner {
           padding: 20px 24px;
-          background: rgba(61, 107, 79, 0.08);
+          background: rgba(61, 107, 79, 0.06);
           border-left: 3px solid #3D6B4F;
           border-radius: 0 8px 8px 0;
           font-size: 15px;
-          color: rgba(255,255,255,0.7);
+          color: #3D6B4F;
           line-height: 1.7;
           font-weight: 500;
         }
@@ -202,7 +214,7 @@ export default async function ArticlePage({ params }: Props) {
 
         .a-hr-line {
           height: 1px;
-          background: rgba(255,255,255,0.08);
+          background: #E8E8E8;
         }
 
         /* 본문 */
@@ -213,7 +225,7 @@ export default async function ArticlePage({ params }: Props) {
         }
 
         .a-section {
-          margin-bottom: 36px;
+          margin-bottom: 40px;
         }
 
         .a-section:last-child {
@@ -221,9 +233,9 @@ export default async function ArticlePage({ params }: Props) {
         }
 
         .a-sub {
-          font-size: 18px;
+          font-size: 20px;
           font-weight: 700;
-          color: #fff;
+          color: #1A1A1A;
           margin-bottom: 16px;
           letter-spacing: -0.02em;
           line-height: 1.4;
@@ -231,7 +243,7 @@ export default async function ArticlePage({ params }: Props) {
 
         .a-p {
           font-size: 16px;
-          color: rgba(255,255,255,0.72);
+          color: #444;
           line-height: 1.85;
           word-break: keep-all;
           margin-bottom: 16px;
@@ -254,23 +266,23 @@ export default async function ArticlePage({ params }: Props) {
           display: inline-flex;
           align-items: center;
           gap: 10px;
-          background: #fff;
-          color: #111;
+          background: #1A1A1A;
+          color: #fff;
           border-radius: 100px;
           padding: 14px 28px;
           font-size: 14px;
           font-weight: 600;
           text-decoration: none;
           letter-spacing: -0.01em;
-          transition: opacity 0.2s;
+          transition: background 0.2s;
         }
 
-        .a-yt-btn:hover { opacity: 0.85; }
+        .a-yt-btn:hover { background: #333; }
 
         .a-yt-icon {
           width: 0;
           height: 0;
-          border-left: 7px solid #111;
+          border-left: 7px solid #fff;
           border-top: 5px solid transparent;
           border-bottom: 5px solid transparent;
         }
@@ -283,7 +295,7 @@ export default async function ArticlePage({ params }: Props) {
         }
 
         .a-footer-inner {
-          border-top: 1px solid rgba(255,255,255,0.08);
+          border-top: 1px solid #E8E8E8;
           padding-top: 28px;
           display: flex;
           align-items: center;
@@ -293,28 +305,28 @@ export default async function ArticlePage({ params }: Props) {
         .a-footer-brand {
           font-size: 14px;
           font-weight: 700;
-          color: rgba(255,255,255,0.6);
+          color: #3D6B4F;
           letter-spacing: -0.02em;
         }
 
         .a-footer-link {
           font-size: 12px;
-          color: rgba(255,255,255,0.3);
+          color: #999;
           text-decoration: none;
           font-weight: 500;
         }
 
-        .a-footer-link:hover { color: rgba(255,255,255,0.5); }
+        .a-footer-link:hover { color: #666; }
 
         @media (max-width: 480px) {
-          .a-hero { padding: 80px 20px 36px; }
-          .a-quote { padding: 0 20px 32px; }
+          .a-hero { padding: 80px 20px 0; }
+          .a-cover { padding: 0 20px 32px; }
+          .a-quote { padding: 0 20px 28px; }
           .a-body { padding: 32px 20px; }
           .a-yt { padding: 12px 20px 40px; }
           .a-footer { padding: 0 20px 60px; }
           .a-hr { padding: 0 20px; }
           .a-p { font-size: 15px; line-height: 1.8; }
-          .a-title { margin-bottom: 16px; }
         }
       `}</style>
 
@@ -337,6 +349,13 @@ export default async function ArticlePage({ params }: Props) {
             {cs.scripture && <span>{cs.scripture}</span>}
           </div>
         </div>
+
+        {/* 커버 카드 이미지 */}
+        {cs.card_urls?.[0] && (
+          <div className="a-cover">
+            <img src={cs.card_urls[0]} alt={cs.title} />
+          </div>
+        )}
 
         {/* 성경구절 인용 */}
         {cs.scripture && (
