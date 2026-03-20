@@ -18,18 +18,8 @@
 }
 @font-face {
   font-family: "Suit";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Medium.woff2") format("woff2");
-  font-weight: 500; font-display: swap;
-}
-@font-face {
-  font-family: "Suit";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-SemiBold.woff2") format("woff2");
   font-weight: 600; font-display: swap;
-}
-@font-face {
-  font-family: "Suit";
-  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_suit@1.0/SUIT-Bold.woff2") format("woff2");
-  font-weight: 700; font-display: swap;
 }
 
 :root {

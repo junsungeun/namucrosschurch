@@ -4,7 +4,7 @@ import Link from "next/link";
 import ScrollProgress from "./ScrollProgress";
 import PageHeader from "@/components/PageHeader";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -119,8 +119,6 @@ export default async function ArticlePage({ params }: Props) {
   return (
     <>
       <style>{`
-        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         .a-page {
