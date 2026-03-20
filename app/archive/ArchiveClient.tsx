@@ -295,11 +295,6 @@ function ArticlesPanel({ articles }: { articles: Article[] }) {
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
         {articles.map((article) => (
           <div key={article.id} className="card-box" style={{ display: "flex", gap: 16, alignItems: "center", opacity: deleting === article.id ? 0.4 : 1, transition: "opacity 0.2s" }}>
-            {/* 아이콘 */}
-            <div style={{ width: 48, height: 48, borderRadius: 8, background: "#2D5A3D", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontFamily: "var(--f-head)", fontSize: 10, color: "rgba(255,255,255,0.8)", fontWeight: 700 }}>아티클</span>
-            </div>
-
             <div style={{ flex: 1, minWidth: 0 }}>
               <Link href={`/articles/${article.slug || article.id}`} style={{ textDecoration: "none" }}>
                 <div style={{ fontFamily: "var(--f-head)", fontSize: 15, fontWeight: 700, color: "var(--text)", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
@@ -307,7 +302,7 @@ function ArticlesPanel({ articles }: { articles: Article[] }) {
                 </div>
               </Link>
               <div className="sub-text" style={{ fontSize: 12 }}>
-                {article.date} · {article.scripture} {article.series ? `· ${article.series}` : ""}
+                {article.date} · {article.scripture}{article.series ? ` · ${article.series}` : ""}
               </div>
             </div>
 
