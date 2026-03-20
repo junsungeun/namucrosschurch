@@ -178,10 +178,10 @@ function BodyFields({ card, format, update }: { card: CardData; format: "feed" |
 }
 
 const HIGHLIGHT_COLORS = [
-  { label: "초록", color: "rgba(61,107,79,0.35)" },
-  { label: "황토", color: "rgba(196,135,58,0.4)" },
-  { label: "하늘", color: "rgba(100,160,220,0.35)" },
-  { label: "분홍", color: "rgba(210,100,120,0.35)" },
+  { label: "초록", color: "rgba(61,107,79,0.35)",   solid: "#3D6B4F" },
+  { label: "황토", color: "rgba(196,135,58,0.4)",   solid: "#C4873A" },
+  { label: "하늘", color: "rgba(100,160,220,0.4)",  solid: "#5EA0DC" },
+  { label: "분홍", color: "rgba(210,100,120,0.4)",  solid: "#D26478" },
 ];
 
 function RichTextEditor({ label, value, onChange, maxChars, required }: {
@@ -250,27 +250,22 @@ function RichTextEditor({ label, value, onChange, maxChars, required }: {
         >
           <em style={{ fontStyle: "italic" }}>I</em>
         </button>
+        <div className="rte-divider" />
         {/* 하이라이트 컬러 선택 */}
         {HIGHLIGHT_COLORS.map((c) => (
           <button
             key={c.color}
             type="button"
-            className={`rte-btn rte-btn--hl${hlColor === c.color ? " rte-btn--active" : ""}`}
+            className={`rte-btn${hlColor === c.color ? " rte-btn--active" : ""}`}
             onMouseDown={(e) => {
               e.preventDefault();
               setHlColor(c.color);
               editor?.chain().focus().toggleHighlight({ color: c.color }).run();
             }}
             title={`${c.label} 하이라이트`}
+            style={{ borderBottom: `3px solid ${c.solid}`, borderRadius: "4px 4px 0 0" }}
           >
-            <span style={{
-              display: "inline-block",
-              width: 14,
-              height: 14,
-              borderRadius: 3,
-              background: c.color.replace(/[\d.]+\)$/, "0.9)"),
-              border: hlColor === c.color ? "2px solid rgba(0,0,0,0.3)" : "1.5px solid rgba(0,0,0,0.15)",
-            }} />
+            <strong style={{ fontSize: 12, color: c.solid }}>A</strong>
           </button>
         ))}
         <div className="rte-divider" />
