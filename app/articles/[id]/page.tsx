@@ -161,22 +161,39 @@ export default async function ArticleViewPage({ params }: Props) {
         .a-meditation-body .dm-blue   { background-image: linear-gradient(transparent 55%, rgba(94,160,220,0.28) 55%); }
         .a-meditation-body .dm-pink   { background-image: linear-gradient(transparent 55%, rgba(210,100,120,0.25) 55%); }
 
-        /* 이전/다음 */
-        .a-nav-articles {
-          display: grid; grid-template-columns: 1fr 1fr;
-          gap: 16px; padding: 48px 0 60px; border-top: 1px solid #eee;
+        /* 이전/다음 — 매거진 스타일 */
+        .a-nav-section { padding: 56px 0 64px; border-top: 2px solid #111; }
+
+        .a-nav-section-label {
+          font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
+          color: #aaa; text-transform: uppercase; margin-bottom: 32px;
         }
 
+        .a-nav-articles { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+
+        .a-nav-divider { width: 1px; background: #eee; margin: 0 32px; }
+
         .a-nav-item {
-          display: flex; flex-direction: column; gap: 8px; padding: 20px;
-          background: #f9f9f7; border-radius: 8px; text-decoration: none; transition: background 0.15s;
+          display: flex; flex-direction: column; gap: 10px;
+          text-decoration: none; padding: 4px 0;
+          transition: opacity 0.15s;
         }
-        .a-nav-item:hover { background: #f0f0ec; }
-        .a-nav-item--next { text-align: right; }
-        .a-nav-label { font-size: 12px; font-weight: 600; color: #3D6B4F; }
-        .a-nav-title { font-size: 15px; font-weight: 600; color: #333; line-height: 1.4; word-break: keep-all; }
-        .a-nav-date { font-size: 12px; color: #aaa; }
-        .a-nav-empty {}
+        .a-nav-item:hover { opacity: 0.65; }
+        .a-nav-item--next { align-items: flex-end; text-align: right; }
+
+        .a-nav-dir {
+          display: flex; align-items: center; gap: 6px;
+          font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #3D6B4F;
+        }
+        .a-nav-item--next .a-nav-dir { flex-direction: row-reverse; }
+
+        .a-nav-arrow { font-size: 16px; line-height: 1; }
+
+        .a-nav-title {
+          font-size: 18px; font-weight: 700; color: #111;
+          line-height: 1.4; word-break: keep-all; letter-spacing: -0.02em;
+        }
+        .a-nav-date { font-size: 12px; color: #aaa; margin-top: 2px; }
 
         .a-footer-mini { text-align: center; padding: 0 0 48px; }
         .a-footer-mini span { font-size: 13px; color: #bbb; }
@@ -185,8 +202,11 @@ export default async function ArticleViewPage({ params }: Props) {
           .a-wrap { padding: 0 20px; }
           .a-header { padding-top: 44px; padding-bottom: 32px; }
           .a-body p { font-size: 15.5px; line-height: 1.8; }
-          .a-nav-articles { grid-template-columns: 1fr; }
-          .a-nav-item--next { text-align: left; }
+          .a-nav-articles { grid-template-columns: 1fr; gap: 32px; }
+          .a-nav-divider { display: none; }
+          .a-nav-item--next { align-items: flex-start; text-align: left; }
+          .a-nav-item--next .a-nav-dir { flex-direction: row; }
+          .a-nav-title { font-size: 16px; }
         }
       `}</style>
 
@@ -252,27 +272,33 @@ export default async function ArticleViewPage({ params }: Props) {
             </div>
           )}
 
-          {/* 이전/다음 */}
+          {/* 이전/다음 — 매거진 */}
           {(prev || next) && (
-            <div className="a-nav-articles">
-              {prev ? (
-                <Link href={`/articles/${prev.slug || prev.id}`} className="a-nav-item">
-                  <span className="a-nav-label">← 이전 아티클</span>
-                  <span className="a-nav-title">{prev.title}</span>
-                  <span className="a-nav-date">{prev.date}</span>
-                </Link>
-              ) : (
-                <div className="a-nav-empty" />
-              )}
-              {next ? (
-                <Link href={`/articles/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
-                  <span className="a-nav-label">다음 아티클 →</span>
-                  <span className="a-nav-title">{next.title}</span>
-                  <span className="a-nav-date">{next.date}</span>
-                </Link>
-              ) : (
-                <div className="a-nav-empty" />
-              )}
+            <div className="a-nav-section">
+              <div className="a-nav-section-label">더 읽기</div>
+              <div className="a-nav-articles">
+                {prev ? (
+                  <Link href={`/articles/${prev.slug || prev.id}`} className="a-nav-item">
+                    <div className="a-nav-dir">
+                      <span className="a-nav-arrow">←</span>
+                      <span>이전 아티클</span>
+                    </div>
+                    <div className="a-nav-title">{prev.title}</div>
+                    <div className="a-nav-date">{prev.date}</div>
+                  </Link>
+                ) : <div />}
+                {prev && next && <div className="a-nav-divider" />}
+                {next ? (
+                  <Link href={`/articles/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
+                    <div className="a-nav-dir">
+                      <span className="a-nav-arrow">→</span>
+                      <span>다음 아티클</span>
+                    </div>
+                    <div className="a-nav-title">{next.title}</div>
+                    <div className="a-nav-date">{next.date}</div>
+                  </Link>
+                ) : <div />}
+              </div>
             </div>
           )}
 
