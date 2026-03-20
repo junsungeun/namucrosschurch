@@ -29,17 +29,17 @@ export default function ScrollProgress() {
           left: 0;
           right: 0;
           height: 3px;
-          background: #e8e8e8;
+          background: #E8E0D8;
           z-index: 50;
         }
 
         .sp-mobile-fill {
           height: 100%;
           background: #3D6B4F;
-          transition: width 0.15s linear;
+          transition: width 0.12s linear;
         }
 
-        /* 데스크톱: 오른쪽 세로 네모 박스 */
+        /* 데스크톱: 오른쪽 세로 직사각형 바 */
         .sp-side {
           display: none;
         }
@@ -52,35 +52,33 @@ export default function ScrollProgress() {
           .sp-side {
             display: block;
             position: fixed;
-            right: calc((100vw - 640px) / 2 - 56px);
+            right: calc((100vw - 640px) / 2 - 64px);
             top: 50%;
             transform: translateY(-50%);
             z-index: 50;
           }
 
           .sp-track {
-            width: 8px;
-            height: 140px;
-            background: #e8e8e8;
-            border-radius: 4px;
+            width: 16px;
+            height: 200px;
+            background: #E8E0D8;
             overflow: hidden;
             position: relative;
           }
 
           .sp-fill {
             position: absolute;
-            bottom: 0;
+            top: 0;
             left: 0;
             width: 100%;
-            background: #3D6B4F;
-            border-radius: 4px;
-            transition: height 0.15s linear;
+            background: #6B4A3D;
+            transition: height 0.12s linear;
           }
         }
 
         @media (min-width: 769px) and (max-width: 880px) {
           .sp-side {
-            right: 12px;
+            right: 8px;
           }
         }
       `}</style>
@@ -90,7 +88,7 @@ export default function ScrollProgress() {
         <div className="sp-mobile-fill" style={{ width: `${progress}%` }} />
       </div>
 
-      {/* 데스크톱: 오른쪽 세로 박스 */}
+      {/* 데스크톱: 오른쪽 세로 직사각형 */}
       <div className="sp-side">
         <div className="sp-track">
           <div className="sp-fill" style={{ height: `${progress}%` }} />
