@@ -5,6 +5,57 @@ import { useRouter } from "next/navigation";
 import PageHeader from "@/components/PageHeader";
 import RichTextEditor from "@/components/RichTextEditor";
 
+/* ── 아코디언 ── */
+function MeditationAccordion({
+  label, color, placeholder, value, onChange,
+}: {
+  label: string; color: string; placeholder: string; value: string; onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const hasContent = value && value !== "<p></p>";
+
+  return (
+    <div style={{ border: "1px solid rgba(0,0,0,0.08)", borderRadius: 10, overflow: "hidden" }}>
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: "100%", display: "flex", alignItems: "center", gap: 12,
+          padding: "14px 16px", background: open ? "#fafaf8" : "#fff",
+          border: "none", cursor: "pointer", textAlign: "left",
+          borderLeft: `3px solid ${color}`,
+          transition: "background 0.15s",
+        }}
+      >
+        <span style={{ flex: 1, fontFamily: "var(--f-head)", fontSize: 13, fontWeight: 700, color: color }}>
+          {label}
+        </span>
+        {hasContent && !open && (
+          <span style={{ fontSize: 11, color: "#aaa", fontWeight: 400 }}>작성됨</span>
+        )}
+        <span style={{
+          fontSize: 12, color: "#aaa",
+          transform: open ? "rotate(180deg)" : "none",
+          transition: "transform 0.2s",
+          display: "inline-block",
+        }}>▾</span>
+      </button>
+
+      {open && (
+        <div style={{ padding: "4px 16px 16px", borderLeft: `3px solid ${color}` }}>
+          <RichTextEditor
+            key={label}
+            label=""
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 type Form = {
   title: string;
   date: string;
@@ -140,45 +191,30 @@ export default function ArticleEditorPage() {
             />
           </div>
 
-          {/* 말씀 묵상 섹션 */}
-          <div style={{ borderTop: "2px solid var(--border)", paddingTop: 24 }}>
-            <div style={{ fontFamily: "var(--f-head)", fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", marginBottom: 6 }}>
-              말씀 묵상
+          {/* 말씀 묵상 — 아코디언 */}
+          <div style={{ borderTop: "1px solid var(--border)", paddingTop: 20 }}>
+            <div style={{ fontFamily: "var(--f-head)", fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", color: "var(--text-muted)", marginBottom: 4 }}>
+              말씀 묵상 <span style={{ fontWeight: 400, fontSize: 11, letterSpacing: 0 }}>(선택)</span>
             </div>
-            <p className="sub-text" style={{ marginBottom: 20, fontSize: 13 }}>
+            <p className="sub-text" style={{ marginBottom: 16, fontSize: 13 }}>
               본문에서 하나님·예수님·성령님을 각각 찾아 정리합니다
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div className="card-box" style={{ padding: 20, borderLeft: "3px solid #3D6B4F" }}>
-                <RichTextEditor
-                  key="god_father"
-                  label="하나님 찾기"
-                  value={form.god_father}
-                  onChange={(v) => set("god_father", v)}
-                  placeholder="이 본문에서 하나님은 어떤 분이신가요?"
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {([
+                { key: "god_father", label: "하나님 찾기", color: "#3D6B4F", placeholder: "이 본문에서 하나님은 어떤 분이신가요?" },
+                { key: "god_son",    label: "예수님 찾기",  color: "#5EA0DC", placeholder: "이 본문에서 예수님은 무엇을 하셨나요?" },
+                { key: "god_spirit", label: "성령님 찾기",  color: "#C4873A", placeholder: "이 본문에서 성령님은 무엇을 원하시나요?" },
+              ] as const).map(({ key, label, color, placeholder }) => (
+                <MeditationAccordion
+                  key={key}
+                  label={label}
+                  color={color}
+                  placeholder={placeholder}
+                  value={form[key]}
+                  onChange={(v) => set(key, v)}
                 />
-              </div>
-
-              <div className="card-box" style={{ padding: 20, borderLeft: "3px solid #5EA0DC" }}>
-                <RichTextEditor
-                  key="god_son"
-                  label="예수님 찾기"
-                  value={form.god_son}
-                  onChange={(v) => set("god_son", v)}
-                  placeholder="이 본문에서 예수님은 무엇을 하셨나요?"
-                />
-              </div>
-
-              <div className="card-box" style={{ padding: 20, borderLeft: "3px solid #C4873A" }}>
-                <RichTextEditor
-                  key="god_spirit"
-                  label="성령님 찾기"
-                  value={form.god_spirit}
-                  onChange={(v) => set("god_spirit", v)}
-                  placeholder="이 본문에서 성령님은 무엇을 원하시나요?"
-                />
-              </div>
+              ))}
             </div>
           </div>
 
