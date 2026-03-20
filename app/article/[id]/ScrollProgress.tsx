@@ -52,8 +52,8 @@ export default function ScrollProgress() {
           .sp-side {
             position: fixed;
             display: block;
-            top: 56px;
-            bottom: 0;
+            top: 60px;
+            bottom: 60px;
             right: calc((100vw - 640px) / 2 - 28px);
             width: 12px;
             background: #D6E4DA;
