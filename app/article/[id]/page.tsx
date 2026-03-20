@@ -2,6 +2,7 @@ import { supabase, CardSet, CardTextData } from "@/lib/supabase";
 import { Metadata } from "next";
 import Link from "next/link";
 import ScrollProgress from "./ScrollProgress";
+import PageHeader from "@/components/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -329,6 +330,7 @@ export default async function ArticlePage({ params }: Props) {
       `}</style>
 
       <div className="a-page">
+        <PageHeader />
         <ScrollProgress />
         <div className="a-wrap">
           {/* 헤더 */}
