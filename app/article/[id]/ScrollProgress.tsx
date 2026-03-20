@@ -54,8 +54,8 @@ export default function ScrollProgress() {
             display: block;
             top: 0;
             bottom: 0;
-            right: calc((100vw - 640px) / 2 - 28px);
-            width: 12px;
+            right: calc((100vw - 640px) / 2 - 75px);
+            width: 55px;
             background: #D6E4DA;
             z-index: 50;
             overflow: hidden;

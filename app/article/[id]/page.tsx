@@ -22,6 +22,29 @@ async function getCardSet(idOrSlug: string): Promise<CardSet | null> {
   }
 }
 
+async function getAdjacentArticles(currentDate: string) {
+  const prev = await supabase
+    .from("cardsets")
+    .select("id, slug, title, date")
+    .lt("date", currentDate)
+    .order("date", { ascending: false })
+    .limit(1)
+    .single();
+
+  const next = await supabase
+    .from("cardsets")
+    .select("id, slug, title, date")
+    .gt("date", currentDate)
+    .order("date", { ascending: true })
+    .limit(1)
+    .single();
+
+  return {
+    prev: prev.data as Pick<CardSet, "id" | "slug" | "title" | "date"> | null,
+    next: next.data as Pick<CardSet, "id" | "slug" | "title" | "date"> | null,
+  };
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const cs = await getCardSet(id);
@@ -90,6 +113,8 @@ export default async function ArticlePage({ params }: Props) {
       ? sectionsFromSummary(cs.summary)
       : [];
 
+  const { prev, next } = await getAdjacentArticles(cs.date);
+
   return (
     <>
       <style>{`
@@ -110,7 +135,6 @@ export default async function ArticlePage({ params }: Props) {
           padding: 0 24px;
         }
 
-        /* 헤더 */
         .a-header {
           padding-top: 56px;
           padding-bottom: 40px;
@@ -143,14 +167,12 @@ export default async function ArticlePage({ params }: Props) {
           content: " · ";
         }
 
-        /* 헤더-본문 구분 */
         .a-header-line {
           height: 1px;
           background: #eee;
           margin-bottom: 40px;
         }
 
-        /* 성경구절 */
         .a-scripture {
           padding: 20px 24px;
           background: #f9f9f7;
@@ -163,12 +185,10 @@ export default async function ArticlePage({ params }: Props) {
           border-radius: 0 6px 6px 0;
         }
 
-        /* 본문 */
         .a-body {
           padding-bottom: 48px;
         }
 
-        /* 섹션: 소제목이 있는 섹션은 상단에 가로선으로 구분 */
         .a-section {
           margin-bottom: 0;
         }
@@ -217,7 +237,6 @@ export default async function ArticlePage({ params }: Props) {
           margin-bottom: 0;
         }
 
-        /* 유튜브 */
         .a-yt {
           padding-bottom: 48px;
         }
@@ -238,34 +257,74 @@ export default async function ArticlePage({ params }: Props) {
 
         .a-yt-btn:hover { background: #333; }
 
-        /* 푸터 */
-        .a-footer {
+        /* 이전/다음 아티클 네비게이션 */
+        .a-nav-articles {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 16px;
+          padding: 48px 0 60px;
           border-top: 1px solid #eee;
-          padding: 24px 0 60px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
         }
 
-        .a-footer-brand {
-          font-size: 14px;
-          font-weight: 700;
+        .a-nav-item {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          padding: 20px;
+          background: #f9f9f7;
+          border-radius: 8px;
+          text-decoration: none;
+          transition: background 0.15s;
+        }
+
+        .a-nav-item:hover {
+          background: #f0f0ec;
+        }
+
+        .a-nav-item--next {
+          text-align: right;
+        }
+
+        .a-nav-label {
+          font-size: 12px;
+          font-weight: 600;
           color: #3D6B4F;
         }
 
-        .a-footer-link {
-          font-size: 13px;
-          color: #aaa;
-          text-decoration: none;
+        .a-nav-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: #333;
+          line-height: 1.4;
+          word-break: keep-all;
         }
 
-        .a-footer-link:hover { color: #666; }
+        .a-nav-date {
+          font-size: 12px;
+          color: #aaa;
+        }
+
+        .a-nav-empty {
+          /* 빈 칸 — 이전 또는 다음이 없을 때 */
+        }
+
+        .a-footer-mini {
+          text-align: center;
+          padding: 0 0 48px;
+        }
+
+        .a-footer-mini span {
+          font-size: 13px;
+          color: #bbb;
+        }
 
         @media (max-width: 480px) {
           .a-wrap { padding: 0 20px; }
           .a-header { padding-top: 44px; padding-bottom: 32px; }
           .a-p { font-size: 15.5px; line-height: 1.8; }
           .a-section-divider { margin: 40px 0 28px; }
+          .a-nav-articles { grid-template-columns: 1fr; }
+          .a-nav-item--next { text-align: left; }
         }
       `}</style>
 
@@ -294,7 +353,6 @@ export default async function ArticlePage({ params }: Props) {
             <div className="a-body">
               {sections.map((sec, si) => (
                 <div key={si} className="a-section">
-                  {/* 두 번째 섹션부터 구분선 */}
                   {si > 0 && (
                     <div className="a-section-divider">
                       <div className="a-section-divider-line" />
@@ -320,10 +378,33 @@ export default async function ArticlePage({ params }: Props) {
             </div>
           )}
 
-          {/* 푸터 */}
-          <div className="a-footer">
-            <div className="a-footer-brand">나무카드.</div>
-            <Link href="/" className="a-footer-link">나무십자가교회</Link>
+          {/* 이전/다음 아티클 */}
+          {(prev || next) && (
+            <div className="a-nav-articles">
+              {prev ? (
+                <Link href={`/article/${prev.slug || prev.id}`} className="a-nav-item">
+                  <span className="a-nav-label">← 이전 말씀</span>
+                  <span className="a-nav-title">{prev.title}</span>
+                  <span className="a-nav-date">{prev.date}</span>
+                </Link>
+              ) : (
+                <div className="a-nav-empty" />
+              )}
+              {next ? (
+                <Link href={`/article/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
+                  <span className="a-nav-label">다음 말씀 →</span>
+                  <span className="a-nav-title">{next.title}</span>
+                  <span className="a-nav-date">{next.date}</span>
+                </Link>
+              ) : (
+                <div className="a-nav-empty" />
+              )}
+            </div>
+          )}
+
+          {/* 미니 푸터 */}
+          <div className="a-footer-mini">
+            <span>나무카드 · 나무십자가교회</span>
           </div>
         </div>
       </div>
