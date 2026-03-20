@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useEditorStore, CardData } from "@/lib/store";
 import CardPreview from "@/components/CardPreview";
 import PageHeader from "@/components/PageHeader";
 import { useRouter } from "next/navigation";
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Highlight from "@tiptap/extension-highlight";
 
 export default function EditorPage() {
   const {
@@ -177,54 +180,32 @@ function BodyFields({ card, format, update }: { card: CardData; format: "feed" |
 function RichTextEditor({ label, value, onChange, maxChars, required }: {
   label: string; value: string; onChange: (v: string) => void; maxChars?: number; required?: boolean;
 }) {
-  const editorRef = useRef<HTMLDivElement>(null);
-  const [textLen, setTextLen] = useState(0);
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Highlight.configure({ multicolor: false }),
+    ],
+    content: value || "",
+    onUpdate({ editor }) {
+      onChange(editor.getHTML());
+    },
+    editorProps: {
+      attributes: {
+        class: "rte-editor",
+        "data-placeholder": "말씀 요약 또는 핵심 내용을 입력하세요",
+      },
+    },
+  });
 
-  // 마운트 시 초기값 세팅
+  // 카드 전환 시 내용 갱신
   useEffect(() => {
-    if (editorRef.current) {
-      editorRef.current.innerHTML = value || "";
-      setTextLen(editorRef.current.innerText.replace(/\n$/, "").length);
+    if (editor && editor.getHTML() !== value) {
+      editor.commands.setContent(value || "");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [editor]);
 
-  const handleInput = useCallback(() => {
-    const html = editorRef.current?.innerHTML ?? "";
-    const len = editorRef.current?.innerText.replace(/\n$/, "").length ?? 0;
-    setTextLen(len);
-    onChange(html);
-  }, [onChange]);
-
-  function exec(cmd: string) {
-    editorRef.current?.focus();
-    document.execCommand(cmd, false, undefined);
-    handleInput();
-  }
-
-  function toggleMark() {
-    const sel = window.getSelection();
-    if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
-    editorRef.current?.focus();
-    try {
-      const range = sel.getRangeAt(0);
-      let node: Node | null = range.commonAncestorContainer;
-      if (node.nodeType === 3) node = node.parentElement;
-      const existingMark = (node as Element)?.closest?.("mark");
-      if (existingMark) {
-        const parent = existingMark.parentNode!;
-        while (existingMark.firstChild) parent.insertBefore(existingMark.firstChild, existingMark);
-        parent.removeChild(existingMark);
-      } else {
-        const mark = document.createElement("mark");
-        range.surroundContents(mark);
-      }
-      handleInput();
-    } catch {
-      // 여러 요소 걸친 선택 — skip
-    }
-  }
-
+  const textLen = editor?.getText().length ?? 0;
   const remaining = maxChars ? maxChars - textLen : null;
   const isWarn = remaining !== null && remaining <= 30;
   const isOver = remaining !== null && remaining < 0;
@@ -244,26 +225,34 @@ function RichTextEditor({ label, value, onChange, maxChars, required }: {
 
       {/* 툴바 */}
       <div className="rte-toolbar">
-        <button type="button" className="rte-btn" onMouseDown={(e) => { e.preventDefault(); exec("bold"); }} title="굵게 (Ctrl+B)">
+        <button
+          type="button"
+          className={`rte-btn${editor?.isActive("bold") ? " rte-btn--active" : ""}`}
+          onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleBold().run(); }}
+          title="굵게 (Ctrl+B)"
+        >
           <strong>B</strong>
         </button>
-        <button type="button" className="rte-btn" onMouseDown={(e) => { e.preventDefault(); exec("italic"); }} title="기울임 (Ctrl+I)">
+        <button
+          type="button"
+          className={`rte-btn${editor?.isActive("italic") ? " rte-btn--active" : ""}`}
+          onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleItalic().run(); }}
+          title="기울임 (Ctrl+I)"
+        >
           <em style={{ fontStyle: "italic" }}>I</em>
         </button>
-        <button type="button" className="rte-btn rte-btn--mark" onMouseDown={(e) => { e.preventDefault(); toggleMark(); }} title="마커 하이라이트">
+        <button
+          type="button"
+          className={`rte-btn rte-btn--mark${editor?.isActive("highlight") ? " rte-btn--active" : ""}`}
+          onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleHighlight().run(); }}
+          title="마커 하이라이트"
+        >
           <span className="rte-mark-preview">A</span>
         </button>
       </div>
 
-      {/* 에디터 */}
-      <div
-        ref={editorRef}
-        className={`input rte-editor${isOver ? " rte-editor--error" : ""}`}
-        contentEditable
-        suppressContentEditableWarning
-        onInput={handleInput}
-        data-placeholder="말씀 요약 또는 핵심 내용을 입력하세요"
-      />
+      {/* TipTap 에디터 */}
+      <EditorContent editor={editor} />
 
       {isOver && (
         <p className="error-text" style={{ marginTop: 4 }}>

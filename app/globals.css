@@ -283,20 +283,43 @@ textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
   padding: 0 1px;
   font-weight: 600;
 }
-.rte-editor {
-  border-radius: 0 0 var(--radius-sm) var(--radius-sm) !important;
+/* TipTap EditorContent 래퍼 */
+.rte-editor-wrap .ProseMirror,
+.ProseMirror {
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding: 10px 14px;
+  font-family: var(--f-body);
+  font-size: 14px;
+  background: #fff;
+  color: var(--text);
   min-height: 140px;
   line-height: 1.7;
   outline: none;
-  white-space: pre-wrap;
   overflow-wrap: break-word;
+  transition: border-color 0.2s;
 }
-.rte-editor:empty::before {
+.ProseMirror:focus { border-color: var(--primary); }
+.ProseMirror p { margin: 0; }
+.ProseMirror p + p { margin-top: 4px; }
+.ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   color: #BBBBBB;
   pointer-events: none;
+  float: left;
+  height: 0;
 }
-.rte-editor--error { border-color: #e05252 !important; }
+.ProseMirror strong { font-weight: 700; }
+.ProseMirror em { font-style: italic; }
+.ProseMirror mark {
+  background: none;
+  background-image: linear-gradient(transparent 55%, rgba(196, 135, 58, 0.4) 55%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 2px;
+  color: inherit;
+}
+.rte-btn--active { background: rgba(0,0,0,0.1) !important; }
 
 /* ── 카드 HTML 본문 렌더 ── */
 .card-html-body strong { font-weight: 700; }
