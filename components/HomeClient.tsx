@@ -275,8 +275,10 @@ export default function HomeClient({ cardsets, articles }: Props) {
                     opacity: deletingArticle === article.id ? 0.4 : 1, transition: "opacity 0.2s",
                     position: "relative",
                   }}>
-                    {/* 텍스트 */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    {/* 텍스트 — 클릭 시 상세 이동 */}
+                    <Link href={`/articles/${article.slug || article.id}`} style={{
+                      flex: 1, minWidth: 0, textDecoration: "none",
+                    }}>
                       <div style={{
                         fontFamily: "var(--f-head)", fontSize: 15, fontWeight: 700,
                         color: "#111", marginBottom: 4,
@@ -287,7 +289,7 @@ export default function HomeClient({ cardsets, articles }: Props) {
                         {article.series && ` · ${article.series}`}
                         {article.scripture && ` · ${article.scripture}`}
                       </div>
-                    </div>
+                    </Link>
 
                     {/* 드롭다운 */}
                     <div className="dropdown" ref={openMenu === article.id ? menuRef : undefined}>
