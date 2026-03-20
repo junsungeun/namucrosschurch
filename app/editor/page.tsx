@@ -249,6 +249,26 @@ function RichTextEditor({ label, value, onChange, maxChars, required }: {
         >
           <span className="rte-mark-preview">A</span>
         </button>
+        <div className="rte-divider" />
+        {([1, 2, 3] as const).map((level) => (
+          <button
+            key={level}
+            type="button"
+            className={`rte-btn${editor?.isActive("heading", { level }) ? " rte-btn--active" : ""}`}
+            onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().toggleHeading({ level }).run(); }}
+            title={`제목 ${level}`}
+          >
+            <span style={{ fontSize: 11, fontWeight: 700 }}>H{level}</span>
+          </button>
+        ))}
+        <button
+          type="button"
+          className={`rte-btn${editor?.isActive("paragraph") && !editor?.isActive("heading") ? " rte-btn--active" : ""}`}
+          onMouseDown={(e) => { e.preventDefault(); editor?.chain().focus().setParagraph().run(); }}
+          title="본문"
+        >
+          <span style={{ fontSize: 11 }}>¶</span>
+        </button>
       </div>
 
       {/* TipTap 에디터 */}
