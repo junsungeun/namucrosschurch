@@ -22,15 +22,15 @@ export default function ScrollProgress() {
   return (
     <>
       <style>{`
-        /* 모바일: 상단 가로 바 */
+        /* 모바일: 헤더 바로 아래 가로 바 */
         .sp-mobile {
           position: fixed;
-          top: 0;
+          top: 56px;
           left: 0;
           right: 0;
-          height: 3px;
+          height: 4px;
           background: #D6E4DA;
-          z-index: 50;
+          z-index: 99;
         }
 
         .sp-mobile-fill {
