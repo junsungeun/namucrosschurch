@@ -7,7 +7,7 @@ import PageHeader from "@/components/PageHeader";
 import { useRouter } from "next/navigation";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Highlight from "@tiptap/extension-highlight";
+import { Mark, mergeAttributes } from "@tiptap/core";
 
 export default function EditorPage() {
   const {
@@ -177,22 +177,47 @@ function BodyFields({ card, format, update }: { card: CardData; format: "feed" |
   );
 }
 
-const HIGHLIGHT_COLORS = [
-  { label: "초록", color: "rgba(61,107,79,0.35)",   solid: "#3D6B4F" },
-  { label: "황토", color: "rgba(196,135,58,0.4)",   solid: "#C4873A" },
-  { label: "하늘", color: "rgba(100,160,220,0.4)",  solid: "#5EA0DC" },
-  { label: "분홍", color: "rgba(210,100,120,0.4)",  solid: "#D26478" },
+// 글자 하단에 두꺼운 컬러 블록 깔리는 디자인 마크
+const DESIGN_MARKS = [
+  { key: "green",  label: "초록", solid: "#3D6B4F", rgba: "rgba(61,107,79,0.42)"    },
+  { key: "amber",  label: "황토", solid: "#C4873A", rgba: "rgba(196,135,58,0.45)"   },
+  { key: "blue",   label: "하늘", solid: "#5EA0DC", rgba: "rgba(94,160,220,0.45)"   },
+  { key: "pink",   label: "분홍", solid: "#D26478", rgba: "rgba(210,100,120,0.42)"  },
 ];
+
+// TipTap 커스텀 마크 — gradient 하단 블록
+const DesignMark = Mark.create({
+  name: "designMark",
+  addAttributes() {
+    return {
+      color: {
+        default: "green",
+        parseHTML: el => el.getAttribute("data-dm"),
+        renderHTML: attrs => ({ "data-dm": attrs.color, class: `dm-${attrs.color}` }),
+      },
+    };
+  },
+  parseHTML() { return [{ tag: "span[data-dm]" }]; },
+  renderHTML({ HTMLAttributes }) { return ["span", mergeAttributes(HTMLAttributes), 0]; },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addCommands(): any {
+    return {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toggleDesignMark: (attrs: { color: string }) => ({ commands }: { commands: any }) =>
+        commands.toggleMark("designMark", attrs),
+    };
+  },
+});
 
 function RichTextEditor({ label, value, onChange, maxChars, required }: {
   label: string; value: string; onChange: (v: string) => void; maxChars?: number; required?: boolean;
 }) {
-  const [hlColor, setHlColor] = useState(HIGHLIGHT_COLORS[0].color);
+  const [dmKey, setDmKey] = useState(DESIGN_MARKS[0].key);
 
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Highlight.configure({ multicolor: true }),
+      DesignMark,
     ],
     content: value || "",
     onUpdate({ editor }) {
@@ -251,30 +276,30 @@ function RichTextEditor({ label, value, onChange, maxChars, required }: {
           <em style={{ fontStyle: "italic" }}>I</em>
         </button>
         <div className="rte-divider" />
-        {/* 하이라이트 형광펜 */}
-        {HIGHLIGHT_COLORS.map((c) => (
+        {/* 디자인 마크 — 하단 블록 */}
+        {DESIGN_MARKS.map((m) => (
           <button
-            key={c.color}
+            key={m.key}
             type="button"
             className="rte-btn"
             onMouseDown={(e) => {
               e.preventDefault();
-              setHlColor(c.color);
-              editor?.chain().focus().toggleHighlight({ color: c.color }).run();
+              setDmKey(m.key);
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (editor?.chain().focus() as any).toggleDesignMark({ color: m.key }).run();
             }}
-            title={`${c.label} 형광펜`}
+            title={`${m.label} 마커`}
             style={{
-              outline: hlColor === c.color ? `2px solid ${c.solid}` : "none",
+              outline: dmKey === m.key ? `2px solid ${m.solid}` : "none",
               outlineOffset: 1,
             }}
           >
-            <strong style={{
+            <span style={{
               fontSize: 13,
-              backgroundColor: c.color,
-              padding: "1px 4px",
-              borderRadius: 2,
-              color: "#111",
-            }}>A</strong>
+              fontWeight: 700,
+              backgroundImage: `linear-gradient(transparent 55%, ${m.rgba} 55%)`,
+              padding: "0 3px",
+            }}>A</span>
           </button>
         ))}
         <div className="rte-divider" />
