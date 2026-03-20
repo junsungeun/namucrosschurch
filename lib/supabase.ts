@@ -26,6 +26,11 @@ export function createServiceClient() {
 }
 
 // 타입
+export type CardTextData = {
+  subtitle?: string;
+  content: string;
+};
+
 export type CardSet = {
   id: string;
   date: string;
@@ -33,6 +38,7 @@ export type CardSet = {
   series?: string;
   scripture?: string;
   summary?: string;
+  cards_data?: CardTextData[];
   youtube_url?: string;
   template_id: string;
   format: "feed" | "story";

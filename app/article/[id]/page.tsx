@@ -1,4 +1,4 @@
-import { supabase, CardSet } from "@/lib/supabase";
+import { supabase, CardSet, CardTextData } from "@/lib/supabase";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -22,35 +22,44 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cs = await getCardSet(id);
   if (!cs) return { title: "나무카드" };
 
+  const desc = cs.cards_data?.length
+    ? cs.cards_data.map((c) => c.content).join(" ").slice(0, 120)
+    : cs.summary?.slice(0, 120) ?? "";
+
   return {
     title: cs.title,
-    description: cs.summary?.slice(0, 120) ?? "",
+    description: desc,
     openGraph: {
       title: cs.title,
-      description: cs.summary?.slice(0, 120) ?? "",
+      description: desc,
       images: cs.card_urls?.[0] ? [{ url: cs.card_urls[0] }] : [],
     },
   };
 }
 
-/** summary 텍스트를 섹션(소제목+본문) 단위로 파싱 */
-function parseSections(summary: string) {
+type Section = { subtitle?: string; paragraphs: string[] };
+
+/** cards_data JSON → 섹션 배열 */
+function sectionsFromCardsData(data: CardTextData[]): Section[] {
+  return data.map((card) => ({
+    subtitle: card.subtitle || undefined,
+    paragraphs: card.content.split("\n").filter(Boolean),
+  }));
+}
+
+/** summary 텍스트 → 섹션 배열 (레거시 폴백) */
+function sectionsFromSummary(summary: string): Section[] {
   const blocks = summary.split("\n\n").filter(Boolean);
-  const sections: { subtitle?: string; paragraphs: string[] }[] = [];
+  const sections: Section[] = [];
 
   for (const block of blocks) {
     const lines = block.split("\n").filter(Boolean);
-    // 첫 줄이 30자 이하이고 여러 줄이면 소제목으로 처리
     if (lines.length >= 2 && lines[0].length <= 30) {
-      sections.push({
-        subtitle: lines[0],
-        paragraphs: lines.slice(1),
-      });
+      sections.push({ subtitle: lines[0], paragraphs: lines.slice(1) });
     } else {
       sections.push({ paragraphs: lines });
     }
   }
-
   return sections;
 }
 
@@ -73,7 +82,12 @@ export default async function ArticlePage({ params }: Props) {
     );
   }
 
-  const sections = cs.summary ? parseSections(cs.summary) : [];
+  // cards_data 우선, 없으면 summary 폴백
+  const sections = cs.cards_data?.length
+    ? sectionsFromCardsData(cs.cards_data)
+    : cs.summary
+      ? sectionsFromSummary(cs.summary)
+      : [];
 
   return (
     <>

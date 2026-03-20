@@ -90,6 +90,9 @@ export default function DonePage() {
               .filter((c) => c.type === "body")
               .map((c) => [c.subtitle, c.content].filter(Boolean).join("\n"))
               .join("\n\n"),
+            cards_data: cards
+              .filter((c) => c.type === "body")
+              .map((c) => ({ subtitle: c.subtitle || undefined, content: c.content || "" })),
             youtube_url: youtubeUrl || null,
             format,
           },

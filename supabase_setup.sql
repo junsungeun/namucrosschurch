@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS cardsets (
   youtube_url   text,
   template_id   text,
   format        text,
+  cards_data    jsonb,
   card_urls     text[],
   created_at    timestamptz default now()
 );

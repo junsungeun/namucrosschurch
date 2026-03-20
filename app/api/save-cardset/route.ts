@@ -8,7 +8,8 @@ export async function POST(req: NextRequest) {
       images: string[];
       meta: {
         date: string; title: string; series?: string; scripture?: string;
-        summary?: string; youtube_url?: string | null; format: string;
+        summary?: string; cards_data?: { subtitle?: string; content: string }[];
+        youtube_url?: string | null; format: string;
       };
     };
 
