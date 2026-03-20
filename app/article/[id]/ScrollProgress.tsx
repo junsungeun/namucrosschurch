@@ -29,7 +29,7 @@ export default function ScrollProgress() {
           left: 0;
           right: 0;
           height: 3px;
-          background: #E8E0D8;
+          background: #D6E4DA;
           z-index: 50;
         }
 
@@ -39,7 +39,7 @@ export default function ScrollProgress() {
           transition: width 0.12s linear;
         }
 
-        /* 데스크톱: 오른쪽 세로 직사각형 바 */
+        /* 데스크톱: 오른쪽 세로 직사각형 */
         .sp-side {
           display: none;
         }
@@ -52,16 +52,16 @@ export default function ScrollProgress() {
           .sp-side {
             display: block;
             position: fixed;
-            right: calc((100vw - 640px) / 2 - 64px);
+            right: calc((100vw - 640px) / 2 - 80px);
             top: 50%;
             transform: translateY(-50%);
             z-index: 50;
           }
 
           .sp-track {
-            width: 16px;
-            height: 200px;
-            background: #E8E0D8;
+            width: 24px;
+            height: 340px;
+            background: #D6E4DA;
             overflow: hidden;
             position: relative;
           }
@@ -71,7 +71,7 @@ export default function ScrollProgress() {
             top: 0;
             left: 0;
             width: 100%;
-            background: #6B4A3D;
+            background: #3D6B4F;
             transition: height 0.12s linear;
           }
         }
