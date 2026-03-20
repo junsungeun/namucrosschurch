@@ -2,6 +2,8 @@ import { supabase, CardSet, CardTextData } from "@/lib/supabase";
 import { Metadata } from "next";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 type Props = { params: Promise<{ id: string }> };
 
 async function getCardSet(id: string): Promise<CardSet | null> {
