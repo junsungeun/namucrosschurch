@@ -20,6 +20,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ko" className={dmSerif.variable}>
       <head>
         <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        {/* GMarketSans — UI 메인 폰트 preload */}
+        <link
+          rel="preload"
+          href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansBold.woff"
+          as="font"
+          type="font/woff"
+          crossOrigin="anonymous"
+        />
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"

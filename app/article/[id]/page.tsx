@@ -281,7 +281,6 @@ export default async function ArticlePage({ params }: Props) {
           display: flex; align-items: center; gap: 6px;
           font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #3D6B4F;
         }
-        .a-nav-item--next .a-nav-dir { flex-direction: row-reverse; }
 
         .a-nav-arrow { font-size: 16px; line-height: 1; }
 
@@ -384,8 +383,8 @@ export default async function ArticlePage({ params }: Props) {
                 {next ? (
                   <Link href={`/article/${next.slug || next.id}`} className="a-nav-item a-nav-item--next">
                     <div className="a-nav-dir">
-                      <span className="a-nav-arrow">→</span>
                       <span>다음 말씀</span>
+                      <span className="a-nav-arrow">→</span>
                     </div>
                     <div className="a-nav-title">{next.title}</div>
                     <div className="a-nav-date">{next.date}</div>
