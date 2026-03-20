@@ -13,7 +13,6 @@ export default function PageHeader({ title }: { title?: string }) {
       <div className="header-spacer" />
       <nav className="header-nav">
         <Link href="/archive" className="btn btn-secondary" style={{ padding: "6px 14px", fontSize: 13 }}>보관함</Link>
-        <Link href="/article-editor" className="btn btn-secondary" style={{ padding: "6px 14px", fontSize: 13 }}>아티클</Link>
         <Link href="/editor" className="btn btn-primary" style={{ padding: "6px 14px", fontSize: 13 }}>만들기</Link>
       </nav>
     </header>
