@@ -251,21 +251,30 @@ function RichTextEditor({ label, value, onChange, maxChars, required }: {
           <em style={{ fontStyle: "italic" }}>I</em>
         </button>
         <div className="rte-divider" />
-        {/* 하이라이트 컬러 선택 */}
+        {/* 하이라이트 형광펜 */}
         {HIGHLIGHT_COLORS.map((c) => (
           <button
             key={c.color}
             type="button"
-            className={`rte-btn${hlColor === c.color ? " rte-btn--active" : ""}`}
+            className="rte-btn"
             onMouseDown={(e) => {
               e.preventDefault();
               setHlColor(c.color);
               editor?.chain().focus().toggleHighlight({ color: c.color }).run();
             }}
-            title={`${c.label} 하이라이트`}
-            style={{ borderBottom: `3px solid ${c.solid}`, borderRadius: "4px 4px 0 0" }}
+            title={`${c.label} 형광펜`}
+            style={{
+              outline: hlColor === c.color ? `2px solid ${c.solid}` : "none",
+              outlineOffset: 1,
+            }}
           >
-            <strong style={{ fontSize: 12, color: c.solid }}>A</strong>
+            <strong style={{
+              fontSize: 13,
+              backgroundColor: c.color,
+              padding: "1px 4px",
+              borderRadius: 2,
+              color: "#111",
+            }}>A</strong>
           </button>
         ))}
         <div className="rte-divider" />
