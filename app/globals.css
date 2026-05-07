@@ -274,17 +274,18 @@ textarea.input { resize: vertical; min-height: 100px; line-height: 1.7; }
 }
 .ProseMirror strong { font-weight: 700; }
 .ProseMirror em { font-style: italic; }
-/* 디자인 마크 — 하단 블록 효과 (에디터 + 카드 공통) */
+/* 디자인 마크 — 에디터 + 카드 공통 (background-color로 통일) */
 .dm-green, .dm-amber, .dm-blue, .dm-pink {
+  display: inline;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
   padding: 0 2px;
   color: inherit;
 }
-.dm-green  { background-image: linear-gradient(transparent 55%, rgba(61,107,79,0.25) 55%);   }
-.dm-amber  { background-image: linear-gradient(transparent 55%, rgba(196,135,58,0.28) 55%);  }
-.dm-blue   { background-image: linear-gradient(transparent 55%, rgba(94,160,220,0.28) 55%);  }
-.dm-pink   { background-image: linear-gradient(transparent 55%, rgba(210,100,120,0.25) 55%); }
+.dm-green  { background-color: rgba(61,107,79,0.22);   }
+.dm-amber  { background-color: rgba(196,135,58,0.25);  }
+.dm-blue   { background-color: rgba(94,160,220,0.25);  }
+.dm-pink   { background-color: rgba(210,100,120,0.22); }
 .rte-btn--active { background: rgba(0,0,0,0.1) !important; }
 .rte-divider { width: 1px; background: rgba(0,0,0,0.1); margin: 3px 2px; align-self: stretch; }
 

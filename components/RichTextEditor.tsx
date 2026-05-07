@@ -14,6 +14,7 @@ export const DESIGN_MARKS = [
 
 export const DesignMark = Mark.create({
   name: "designMark",
+  spanning: false,
   addAttributes() {
     return {
       color: {
