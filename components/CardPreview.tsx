@@ -15,7 +15,7 @@ export const TEMPLATES = [
 
 const F_SERIF = 'var(--font-dm-serif), "DM Serif Display", serif';
 const F_BODY  = '"Suit", "Noto Sans KR", sans-serif';
-const F_HEAD  = '"GMarketSans", sans-serif';
+const F_HEAD  = 'var(--font-gmarket), "GMarketSans", sans-serif';
 
 // 실제 출력 해상도
 export const CARD_W = 1080;
